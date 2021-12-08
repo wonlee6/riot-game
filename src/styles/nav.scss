@@ -1,0 +1,32 @@
+.nav_container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: beige;
+  position: sticky;
+  box-shadow: 5px 3px 5px #333;
+  top: 0px;
+  .title {
+    width: 20%;
+    text-align: center;
+    img {
+      height: 50px;
+      cursor: pointer;
+    }
+  }
+  .icon_wrap {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 30%;
+    text-align: center;
+    height: 100%;
+    li {
+      font-size: 20px;
+      width: 30%;
+      cursor: pointer;
+      height: 100%;
+      font-weight: 500;
+    }
+  }
+}
