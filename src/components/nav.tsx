@@ -2,8 +2,13 @@ import '../styles/nav.scss'
 import lol_icon2 from '../styles/icon/lol_icon.png'
 import { Icon } from '@iconify/react'
 import { useNavigate } from 'react-router'
+import { useState } from 'react'
+import EmailAlert from './email-alert'
+
 export default function Nav() {
   const navigate = useNavigate()
+  const [open, setOpen] = useState<boolean>(false)
+
   return (
     <>
       <div className='nav_container'>
@@ -19,12 +24,13 @@ export default function Nav() {
             instagram
             <Icon icon='simple-line-icons:social-instagram' />
           </li>
-          <li onClick={() => navigate('send_email')}>
+          <li onClick={() => setOpen(true)}>
             email
             <Icon icon='icon-park:accept-email' />
           </li>
         </ul>
       </div>
+      <EmailAlert open={open} setOpen={setOpen} />
     </>
   )
 }
