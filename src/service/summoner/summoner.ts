@@ -1,12 +1,14 @@
 import axios, { AxiosRequestConfig } from 'axios'
 
+const api_key = 'RGAPI-aebf0487-5230-4b2a-be26-488a2ec9e915'
+
 export const summoner = {
   async searchSummoner(request: string) {
     const config: AxiosRequestConfig = {
       url: `https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/${request}`,
       method: 'GET',
       params: {
-        api_key: 'RGAPI-79549ee2-300b-4cb1-a93b-5c679ca59d0b',
+        api_key,
       },
     }
 
@@ -20,7 +22,7 @@ export const summoner = {
       url: `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${request}`,
       method: 'GET',
       params: {
-        api_key: 'RGAPI-79549ee2-300b-4cb1-a93b-5c679ca59d0b',
+        api_key,
       },
     }
 

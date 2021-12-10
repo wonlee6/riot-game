@@ -7,10 +7,11 @@
 
 .container {
   min-height: 100vh;
-  background-color: antiquewhite;
+  background-color: #fff;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   .search_box {
     display: flex;
     justify-content: center;
@@ -27,10 +28,11 @@
       border: none;
       margin-right: 5px;
       border-radius: 5px;
+      background-color: rgba(161, 159, 159, 0.527);
     }
     .search_input:focus {
       outline: none;
-      border-bottom: 1px solid aqua;
+      border-bottom: 1px solid rgba(0, 255, 255, 0.445);
     }
     .search_btn {
       width: 10%;
@@ -40,6 +42,42 @@
       border: none;
       cursor: pointer;
       border-radius: 50%;
+    }
+  }
+
+  .summoner_info_container {
+    background-color: #bebebe49;
+    width: 80%;
+    border-radius: 4px;
+    min-height: 70vh;
+    margin-top: 50px;
+    .summoner_card {
+      padding: 10px;
+      height: 200px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: row;
+      margin: 10px;
+      background-color: #fff;
+      border-radius: 5px;
+      .emblem_box {
+        width: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        img {
+          height: 150px;
+        }
+      }
+      .info_box {
+        width: 50%;
+
+        .info_data {
+          padding: 5px;
+        }
+      }
     }
   }
 }

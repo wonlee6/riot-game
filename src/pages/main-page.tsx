@@ -5,40 +5,44 @@ import getSummonerAuthResponseDataModel from '../service/summoner/model/get-summ
 import '../styles/main_page.scss'
 import ReactiveButton from 'reactive-button'
 import Nav from '../components/nav'
+import SummonerInfoPage from './summoner-info-page'
 
 const MainPage = () => {
   const [search_name, setSearchName] = useState<string>('')
   const [btn_state, setBtnState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
-
   const btn_ref: React.MutableRefObject<null | HTMLButtonElement> = useRef(null)
+
   /**
    *  API State
    */
   // 서머너 auth 정보
   const [summoner_auth_data, setSummonerAuthData] = useState<getSummonerAuthResponseDataModel>()
   // 서머너 league 데이터
-  const [summoner_data, setSummonerData] = useState<getLeagueResponseDataModel>()
+  const [summoner_data, setSummonerData] = useState<Array<getLeagueResponseDataModel>>([])
 
   /**
    *  function
    */
-  const onClickHandler = () => {
-    setBtnState('loading')
-    setTimeout(() => {
-      setBtnState('success')
-    }, 2000)
+  const handleEnther = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') searchSummoner()
   }
+
   /**
    *  API Request
    */
   // 서머너 검색
   const searchSummoner = async () => {
     if (search_name === '') return
+    setBtnState('loading')
+
     await API.summoner //
       .searchSummoner(search_name)
       .then((res) => {
         if (res.status === 200) {
+          setBtnState('success')
           setSummonerAuthData(res.data)
+        } else {
+          setBtnState('error')
         }
       })
   }
@@ -73,6 +77,8 @@ const MainPage = () => {
             value={search_name}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchName(e.target.value)}
             autoComplete='off'
+            placeholder='닉네임을 입력하세요'
+            onKeyPress={handleEnther}
           />
 
           <ReactiveButton
@@ -81,12 +87,17 @@ const MainPage = () => {
             buttonState={btn_state}
             buttonRef={btn_ref}
             width={'20%'}
-            onClick={onClickHandler}
+            onClick={searchSummoner}
             idleText='검색하기'
             successText='성공!'
             color='blue'
           />
         </div>
+        {summoner_data.length > 0 && (
+          <div className='summoner_info_container'>
+            <SummonerInfoPage summoner_data={summoner_data} />
+          </div>
+        )}
       </div>
     </>
   )

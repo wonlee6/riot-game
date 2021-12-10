@@ -13,7 +13,7 @@ export default function Nav() {
     <>
       <div className='nav_container'>
         <div className='title'>
-          <img src={lol_icon2} alt='lol' />
+          <img src={lol_icon2} alt='lol' onClick={() => window.location.reload()} />
         </div>
         <ul className='icon_wrap'>
           <li onClick={() => window.location.assign('https://github.com/wonlee6')}>
