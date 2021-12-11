@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import API from '../service/api'
 import GetDetailMatchResponseDataModel from '../service/match/model/get-detail-match-response-data-model'
 
@@ -37,37 +37,12 @@ export default function Match({ puuid }: MatchModel) {
           .detailMatch(item)
           .then(async (res) => {
             if (res.status === 200) {
-              await setDetailMatchData(
-                detail_match_data.includes(res.data)
-                  ? [...detail_match_data]
-                  : detail_match_data.concat(res.data)
-              )
+              await setDetailMatchData((prev) => [...prev, res.data])
             }
           })
           .catch((err) => console.log(err))
     )
   }
-
-  const aaa = useMemo(() => {
-    // match_list_data.map(
-    //   async (item) =>
-    //     await API.match
-    //       .detailMatch(item)
-    //       .then(async (res) => {
-    //         if (res.status === 200) {
-    //           await setDetailMatchData(
-    //             detail_match_data.includes(res.data)
-    //               ? [...detail_match_data]
-    //               : detail_match_data.concat(res.data)
-    //           )
-    //         }
-    //       })
-    //       .catch((err) => console.log(err))
-    // )
-    match_list_data.map((item) => {
-      item
-    })
-  }, [match_list_data])
 
   useEffect(() => {
     if (puuid) {
@@ -76,7 +51,7 @@ export default function Match({ puuid }: MatchModel) {
   }, [puuid])
 
   useEffect(() => {
-    // getDetailMatchData()
+    getDetailMatchData()
   }, [match_list_data.length > 0])
 
   useEffect(() => {
