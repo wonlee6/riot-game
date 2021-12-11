@@ -1,17 +1,16 @@
 import axios, { AxiosRequestConfig } from 'axios'
-
-const api_key = 'RGAPI-aebf0487-5230-4b2a-be26-488a2ec9e915'
+import { API_KEY, BASE_URL } from '../../function/api-constant'
 
 export const summoner = {
+  // 서머너 검색
   async searchSummoner(request: string) {
     const config: AxiosRequestConfig = {
-      url: `https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-name/${request}`,
+      url: `${BASE_URL}/lol/summoner/v4/summoners/by-name/${request}`,
       method: 'GET',
       params: {
-        api_key,
+        api_key: API_KEY,
       },
     }
-
     return await axios(config)
   },
 
@@ -19,13 +18,12 @@ export const summoner = {
   // id로 검색
   async getSummonerData(request?: string) {
     const config: AxiosRequestConfig = {
-      url: `https://kr.api.riotgames.com/lol/league/v4/entries/by-summoner/${request}`,
+      url: `${BASE_URL}/lol/league/v4/entries/by-summoner/${request}`,
       method: 'GET',
       params: {
-        api_key,
+        api_key: API_KEY,
       },
     }
-
     return await axios(config)
   },
 }

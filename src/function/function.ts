@@ -37,3 +37,14 @@ export const telFormat = (e: string) => {
 export const emailRegex = (e: string) => {
   return /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i.test(e)
 }
+
+// 1의 자리 수 2의 자리 수로 포맷
+export const numberFormat = (e: number): string => {
+  return e < 10 ? `0${e}` : `${e}`
+}
+
+// second -> 분:초
+export const second2MS = (e: number): string => {
+  const minute = Math.floor(e / 60)
+  return `${minute}:${numberFormat(e - minute * 60)}`
+}

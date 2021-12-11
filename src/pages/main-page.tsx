@@ -6,6 +6,7 @@ import '../styles/main_page.scss'
 import ReactiveButton from 'reactive-button'
 import Nav from '../components/nav'
 import SummonerInfoPage from './summoner-info-page'
+import Match from './match'
 
 const MainPage = () => {
   const [search_name, setSearchName] = useState<string>('')
@@ -41,9 +42,11 @@ const MainPage = () => {
         if (res.status === 200) {
           setBtnState('success')
           setSummonerAuthData(res.data)
-        } else {
-          setBtnState('error')
         }
+      })
+      .catch((err) => {
+        console.log(err)
+        setTimeout(() => setBtnState('error'), 1000)
       })
   }
 
@@ -96,6 +99,10 @@ const MainPage = () => {
         {summoner_data.length > 0 && (
           <div className='summoner_info_container'>
             <SummonerInfoPage summoner_data={summoner_data} />
+            <div>
+              {/* <ChampionMasteries uid={summoner_data[0]?.summonerId} /> */}
+              <Match puuid={summoner_auth_data?.puuid} />
+            </div>
           </div>
         )}
       </div>
