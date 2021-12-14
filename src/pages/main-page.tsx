@@ -99,9 +99,12 @@ const MainPage = () => {
         {summoner_data.length > 0 && (
           <div className='summoner_info_container'>
             <SummonerInfoPage summoner_data={summoner_data} />
-            <div>
+            <div className='match_container'>
               {/* <ChampionMasteries uid={summoner_data[0]?.summonerId} /> */}
-              <Match puuid={summoner_auth_data?.puuid} />
+              <div className='most_champ_box'></div>
+              <div className='match_list_box'>
+                <Match puuid={summoner_auth_data?.puuid} />
+              </div>
             </div>
           </div>
         )}

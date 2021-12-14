@@ -53,7 +53,7 @@
     margin-top: 50px;
     .summoner_card {
       padding: 10px;
-      height: 200px;
+      height: 165px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -61,6 +61,8 @@
       margin: 10px;
       background-color: #fff;
       border-radius: 5px;
+      border: 1px solid #cdd2d2;
+
       .emblem_box {
         width: 50%;
         display: flex;
@@ -77,6 +79,19 @@
         .info_data {
           padding: 5px;
         }
+      }
+    }
+
+    .match_container {
+      display: flex;
+      width: 100%;
+      .most_champ_box {
+        width: 30%;
+      }
+      .match_list_box {
+        width: 70%;
+        border: 1px solid black;
+        padding: 8px;
       }
     }
   }

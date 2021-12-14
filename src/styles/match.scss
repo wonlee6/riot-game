@@ -1,0 +1,211 @@
+.match_item {
+  position: relative;
+  margin-bottom: 8px;
+
+  .match_wrap {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #cdd2d2;
+
+    .content {
+      display: flex;
+      background-color: #fff;
+      border-radius: 4px;
+      height: 100px;
+      .game_stats {
+        width: 90px;
+        font-size: 12px;
+        color: #555;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        .game_type {
+          span {
+            font-family: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+        .game_time {
+        }
+        .bar {
+          width: 27px;
+          margin: 5px auto;
+          height: 2px;
+          display: block;
+          background-color: #cdd2d2;
+        }
+        .game_result {
+        }
+        .game_result.lose {
+          color: #c6443e;
+          font-family: bold;
+        }
+        .game_result.win {
+          color: #1a78ae;
+          font-family: bold;
+        }
+        .game_length {
+        }
+      }
+      .game_setting_info {
+        width: 113px;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        justify-content: center;
+        .info_box {
+          width: 100%;
+          display: flex;
+          .cham_img {
+            width: 40%;
+            img {
+              width: 46px;
+              height: 46px;
+              border-radius: 50%;
+              margin-top: 8px;
+            }
+          }
+          .spell {
+            width: 30%;
+            text-align: center;
+            margin-top: 5px;
+            .spell_item {
+              img {
+                width: 26px;
+                height: 26px;
+              }
+            }
+          }
+          .runes {
+            width: 30%;
+            text-align: center;
+            margin-top: 5px;
+            .runes_item {
+              img {
+                width: 26px;
+                height: 26px;
+              }
+            }
+          }
+        }
+
+        .champ_name {
+          text-align: center;
+          span {
+            font-size: 12px;
+            color: #555;
+          }
+        }
+      }
+
+      .kda {
+        font-size: 12px;
+        width: 115px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        .kda_score {
+          font-weight: 700;
+          font-size: 15px;
+          span {
+            color: #c6443e;
+          }
+        }
+        .kda_avg {
+          font-size: 12px;
+          span {
+            color: #555;
+          }
+        }
+        .kda_kill {
+          margin-top: 8px;
+          span {
+            border: 1px solid #c6443e;
+            background-color: #ee5a52;
+            border-radius: 10px;
+            color: #fff;
+            padding: 2px 5px 2px 5px;
+          }
+        }
+      }
+
+      .stats {
+        width: 115px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        color: #555;
+        font-size: 12px;
+
+        .stats_info {
+          margin: 2px 0;
+          .stats_kill {
+            color: #c6443e;
+          }
+        }
+      }
+      .item {
+        width: 100px;
+
+        .item_list {
+          display: flex;
+          flex-wrap: wrap;
+          width: 100%;
+          justify-content: center;
+          align-items: center;
+          flex-direction: row;
+          margin-top: 20px;
+          .item {
+            width: 24px;
+            height: 24px;
+            img {
+              width: 22px;
+              height: 22px;
+            }
+          }
+        }
+      }
+      .players {
+        width: 190px;
+        display: flex;
+
+        .team {
+          width: 50%;
+          display: flex;
+          font-size: 12px;
+          color: #555;
+          flex-direction: column;
+          .summoner {
+            display: flex;
+            width: 100%;
+            flex-direction: row;
+            height: 20px;
+            .play_champ {
+              width: 20%;
+              img {
+                width: 16;
+                height: 16px;
+              }
+            }
+            .player_name {
+              width: 80%;
+
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+          }
+        }
+      }
+      .stats_btn {
+        width: 30px;
+      }
+    }
+  }
+}
