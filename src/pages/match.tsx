@@ -64,7 +64,7 @@ export default function Match({ puuid }: MatchModel) {
     <>
       <div className='match_item'>
         <div className='match_wrap'>
-          <div className='content'>
+          <div className='content Lose'>
             <div className='game_stats'>
               <div className='game_type'>
                 <span>칼바람 나락</span>

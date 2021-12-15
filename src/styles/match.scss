@@ -3,14 +3,15 @@
   margin-bottom: 8px;
 
   .match_wrap {
-    display: table;
+    display: block;
     width: 100%;
-    border-collapse: collapse;
-    border: 1px solid #cdd2d2;
 
+    .content.Lose {
+      background-color: #cea7a7;
+      border-color: #cea7a7;
+    }
     .content {
       display: flex;
-      background-color: #fff;
       border-radius: 4px;
       height: 100px;
       .game_stats {
