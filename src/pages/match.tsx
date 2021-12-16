@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { Icon } from '@iconify/react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { CHAMP_URL, ITEM_IMG, RUNES_IMG, SPELL_URL } from '../function/api-constant'
 import { second2MS } from '../function/function'
 import API from '../service/api'
 import GetDetailMatchResponseDataModel from '../service/match/model/get-detail-match-response-data-model'
-import { summoner } from '../service/summoner/summoner'
 import '../styles/match.scss'
 
 type MatchModel = {
@@ -22,20 +22,6 @@ export default function Match({ puuid, search_name }: MatchModel) {
 
   // function
 
-  const largestMultiKill = (kill: any) => {
-    console.log(kill)
-    if (kill === [2]) {
-      return '더블킬'
-    } else if (kill === [3]) {
-      return '멀티킬'
-    } else if (kill === [4]) {
-      return '쿼드라킬'
-    } else if (kill === [5]) {
-      return '펜타킬'
-    } else {
-      return ''
-    }
-  }
   /**
    *  API Request
    */
@@ -55,19 +41,21 @@ export default function Match({ puuid, search_name }: MatchModel) {
   }
 
   const getDetailMatchData = () => {
-    if (detail_match_data.length === 20) return
-    match_list_data.map((item) =>
-      API.match
-        .detailMatch(item)
-        .then(async (res) => {
-          if (res.status === 200) {
-            await setDetailMatchData((prev) => {
-              return prev[res.data] ? [...prev] : [...prev, res.data]
-            })
-          }
-        })
-        .catch((err) => console.log(err))
-    )
+    if (detail_match_data.length >= 19) return
+    else {
+      match_list_data.map((item) =>
+        API.match
+          .detailMatch(item)
+          .then(async (res) => {
+            if (res.status === 200) {
+              await setDetailMatchData((prev) => {
+                return prev[res.data] ? [...prev] : [...prev, res.data]
+              })
+            }
+          })
+          .catch((err) => console.log(err))
+      )
+    }
   }
 
   useEffect(() => {
@@ -77,7 +65,7 @@ export default function Match({ puuid, search_name }: MatchModel) {
   }, [puuid])
 
   useEffect(() => {
-    if (detail_match_data.length <= 20) {
+    if (detail_match_data.length <= 19) {
       getDetailMatchData()
     }
   }, [match_list_data.length > 0])
@@ -104,7 +92,11 @@ export default function Match({ puuid, search_name }: MatchModel) {
           .map((i) => i.kills)
           .reduce((acc, cur) => acc + cur, 0)
 
-        const largestKill = self.filter((i) => i.largestMultiKill).map((i) => i.largestMultiKill)
+        const largestKill = self
+          .filter((i) => i.largestMultiKill)
+          .map((i) => i.largestMultiKill)
+          .join('')
+
         return (
           <div className='match_item'>
             <div className='match_wrap'>
@@ -166,17 +158,15 @@ export default function Match({ puuid, search_name }: MatchModel) {
                     :1 <span>평점</span>
                   </div>
                   <div className='kda_kill'>
-                    {largestKill !== [1] && (
+                    {largestKill !== '1' && (
                       <span>
-                        {largestKill === [2]
+                        {largestKill === '2'
                           ? '더블킬'
-                          : largestKill === [3]
+                          : largestKill === '3'
                           ? '트리플킬'
-                          : largestKill === [4]
+                          : largestKill === '4'
                           ? '쿼드라킬'
-                          : largestKill === [5]
-                          ? '펜타킬'
-                          : ''}
+                          : '펜타킬'}
                       </span>
                     )}
                   </div>
@@ -204,28 +194,79 @@ export default function Match({ puuid, search_name }: MatchModel) {
                 <div className='item'>
                   <div className='item_list'>
                     <div className='item'>
-                      <img src={`${ITEM_IMG}/3089.png`} alt='item1' />
+                      {+self.filter((i) => i.item0).join('') !== 0 ? (
+                        <img
+                          src={`${ITEM_IMG}/${self.filter((i) => i.item0).map((i) => i.item0)}.png`}
+                          alt='item0'
+                        />
+                      ) : (
+                        <div className='noneItem'></div>
+                      )}
                     </div>
                     <div className='item'>
-                      <img src='' alt='item2' />
+                      {+self.filter((i) => i.item1).join('') !== 0 ? (
+                        <img
+                          src={`${ITEM_IMG}/${self.filter((i) => i.item1).map((i) => i.item1)}.png`}
+                          alt='item1'
+                        />
+                      ) : (
+                        <div className='noneItem'></div>
+                      )}
                     </div>
                     <div className='item'>
-                      <img src='' alt='item3' />
+                      {+self.filter((i) => i.item2).join('') !== 0 ? (
+                        <img
+                          src={`${ITEM_IMG}/${self.filter((i) => i.item2).map((i) => i.item2)}.png`}
+                          alt='item2'
+                        />
+                      ) : (
+                        <div className='noneItem'></div>
+                      )}
                     </div>
                     <div className='item'>
-                      <img src='' alt='etc' />
+                      {+self.filter((i) => i.item6).join('') !== 0 ? (
+                        <img
+                          src={`${ITEM_IMG}/${self.filter((i) => i.item6).map((i) => i.item6)}.png`}
+                          alt='item6'
+                        />
+                      ) : (
+                        <div className='noneItem'></div>
+                      )}
                     </div>
                     <div className='item'>
-                      <img src='' alt='item5' />
+                      {+self.filter((i) => i.item3).join('') !== 0 ? (
+                        <img
+                          src={`${ITEM_IMG}/${self.filter((i) => i.item3).map((i) => i.item3)}.png`}
+                          alt='item3'
+                        />
+                      ) : (
+                        <div className='noneItem'></div>
+                      )}
                     </div>
                     <div className='item'>
-                      <img src='' alt='item6' />
+                      {+self.filter((i) => i.item4).join('') !== 0 ? (
+                        <img
+                          src={`${ITEM_IMG}/${self.filter((i) => i.item4).map((i) => i.item4)}.png`}
+                          alt='item1'
+                        />
+                      ) : (
+                        <div className='noneItem'></div>
+                      )}
                     </div>
                     <div className='item'>
-                      <img src='' alt='item7' />
+                      {+self.filter((i) => i.item5).join('') !== 0 ? (
+                        <img
+                          src={`${ITEM_IMG}/${self.filter((i) => i.item5).map((i) => i.item5)}.png`}
+                          alt='item1'
+                        />
+                      ) : (
+                        <div className='noneItem'></div>
+                      )}
                     </div>
                     <div className='item'>
-                      <img src='' alt='item8' />
+                      <div className='noneItem'>
+                        <Icon icon='mdi:magic-staff' className='magic' />
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -1,12 +1,10 @@
 import '../styles/nav.scss'
 import lol_icon2 from '../styles/icon/lol_icon.png'
 import { Icon } from '@iconify/react'
-import { useNavigate } from 'react-router'
 import { useState } from 'react'
 import EmailAlert from './email-alert'
 
 export default function Nav() {
-  const navigate = useNavigate()
   const [open, setOpen] = useState<boolean>(false)
 
   return (
