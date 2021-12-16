@@ -46,5 +46,5 @@ export const numberFormat = (e: number): string => {
 // second -> 분:초
 export const second2MS = (e: number): string => {
   const minute = Math.floor(e / 60)
-  return `${minute}:${numberFormat(e - minute * 60)}`
+  return `${minute}분${numberFormat(e - minute * 60)}초`
 }

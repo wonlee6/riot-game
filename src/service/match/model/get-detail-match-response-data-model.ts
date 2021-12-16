@@ -158,7 +158,7 @@ export default interface GetDetailMatchResponseDataModel {
         visionWardsBoughtInGame: number
         wardsKilled: number
         wardsPlaced: number
-        win: boolean
+        win: string
       }
     ]
   }

@@ -103,7 +103,7 @@ const MainPage = () => {
               {/* <ChampionMasteries uid={summoner_data[0]?.summonerId} /> */}
               <div className='most_champ_box'></div>
               <div className='match_list_box'>
-                <Match puuid={summoner_auth_data?.puuid} />
+                <Match puuid={summoner_auth_data?.puuid} search_name={search_name} />
               </div>
             </div>
           </div>
