@@ -57,7 +57,7 @@
         }
       }
       .game_setting_info {
-        width: 113px;
+        width: 115px;
         display: flex;
         flex-wrap: wrap;
         flex-direction: column;
@@ -156,7 +156,7 @@
         }
       }
       .item {
-        width: 100px;
+        width: 115px;
 
         .item_list {
           display: flex;
@@ -193,8 +193,9 @@
       .players {
         width: 190px;
         display: flex;
-
+        margin-left: 15px;
         .team {
+          margin-top: 2px;
           width: 50%;
           display: flex;
           font-size: 12px;

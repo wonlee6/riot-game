@@ -142,9 +142,6 @@ export default function Match({ puuid, search_name }: MatchModel) {
     return result
   }, [spell_data])
 
-  useEffect(() => {
-    console.log(filtered_data)
-  }, [filtered_data])
   return (
     <>
       {filtered_data?.map((item, index) => {
@@ -182,266 +179,230 @@ export default function Match({ puuid, search_name }: MatchModel) {
           .map((i) => i.slots[0].runes[0].icon)
 
         const subRunes_img = runes_data?.filter((i) => i.id === subRunes).map((i) => i.icon)
+
+        const redTeam = item.info.participants.filter((i) => i.teamId === 100)
+
+        const blueTeam = item.info.participants.filter((i) => i.teamId === 200)
         return (
-          <div className='match_item' key={index}>
-            <div className='match_wrap'>
-              <div className={`content ${win === 'true' ? 'Win' : 'Lose'}`}>
-                <div className='game_stats'>
-                  <div className='game_type'>
-                    <span>{item.info.gameMode === 'ARAM' ? '칼바람 나락' : '일반'}</span>
-                  </div>
-                  <div className='game_time'>{fromNowDate(gameCreation)}</div>
-                  <div className='bar'></div>
-                  <div className={`game_result ${win === 'true' ? 'win' : 'lose'}`}>
-                    {win === 'true' ? '승리' : '패배'}
-                  </div>
-                  <div className='game_length'>{second2MS(item.info.gameDuration)}</div>
-                </div>
-                <div className='game_setting_info'>
-                  <div className='info_box'>
-                    <div className='cham_img'>
-                      <img
-                        src={`${CHAMP_IMG}/${self.map((i) => i.championName)}.png`}
-                        alt='champ_img'
-                      />
+          <React.Fragment key={index}>
+            <div className='match_item'>
+              <div className='match_wrap'>
+                <div className={`content ${win === 'true' ? 'Win' : 'Lose'}`}>
+                  <div className='game_stats'>
+                    <div className='game_type'>
+                      <span>{item.info.gameMode === 'ARAM' ? '칼바람 나락' : '일반'}</span>
                     </div>
-                    <div className='spell'>
-                      <div className='spell_item'>
-                        <img src={`${SPELL_IMG}/${spell1_img}`} alt='spell' />
+                    <div className='game_time'>{fromNowDate(gameCreation)}</div>
+                    <div className='bar'></div>
+                    <div className={`game_result ${win === 'true' ? 'win' : 'lose'}`}>
+                      {win === 'true' ? '승리' : '패배'}
+                    </div>
+                    <div className='game_length'>{second2MS(item.info.gameDuration)}</div>
+                  </div>
+                  <div className='game_setting_info'>
+                    <div className='info_box'>
+                      <div className='cham_img'>
+                        <img
+                          src={`${CHAMP_IMG}/${self.map((i) => i.championName)}.png`}
+                          alt='champ_img'
+                        />
                       </div>
-                      <div className='spell_item'>
-                        <img src={`${SPELL_IMG}/${spell2_img}`} alt='spell2' />
+                      <div className='spell'>
+                        <div className='spell_item'>
+                          <img src={`${SPELL_IMG}/${spell1_img}`} alt='spell' />
+                        </div>
+                        <div className='spell_item'>
+                          <img src={`${SPELL_IMG}/${spell2_img}`} alt='spell2' />
+                        </div>
+                      </div>
+                      <div className='runes'>
+                        <div className='runes_item'>
+                          <img src={`${RUNES_IMG}/${mainRunes_img}`} alt='runes' />
+                        </div>
+                        <div className='runes_item'>
+                          <img src={`${RUNES_IMG}/${subRunes_img}`} alt='spell' />
+                        </div>
                       </div>
                     </div>
-                    <div className='runes'>
-                      <div className='runes_item'>
-                        <img src={`${RUNES_IMG}/${mainRunes_img}`} alt='runes' />
-                      </div>
-                      <div className='runes_item'>
-                        <img src={`${RUNES_IMG}/${subRunes_img}`} alt='spell' />
-                      </div>
+                    <div className='champ_name'>
+                      <span>벨코즈</span>
                     </div>
                   </div>
-                  <div className='champ_name'>
-                    <span>벨코즈</span>
-                  </div>
-                </div>
-                <div className='kda'>
-                  <div className='kda_score'>
-                    {self.map((i) => i.kills)} / <span>{self.map((i) => i.deaths)}</span> /{' '}
-                    {self.map((i) => i.assists)}
-                  </div>
-                  <div className='kda_avg'>
-                    {(
-                      (parseInt(self.map((i) => i.kills).join('')) +
-                        parseInt(self.map((i) => i.assists).join(''))) /
-                      parseInt(self.map((i) => i.deaths).join(''))
-                    ).toFixed(2)}
-                    :1 <span>평점</span>
-                  </div>
-                  <div className='kda_kill'>
-                    {largestKill !== '1' && (
-                      <span>
-                        {largestKill === '2'
-                          ? '더블킬'
-                          : largestKill === '3'
-                          ? '트리플킬'
-                          : largestKill === '4'
-                          ? '쿼드라킬'
-                          : '펜타킬'}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className='stats'>
-                  <div className='stats_info'>
-                    <span>레벨{self.map((i) => i.champLevel)}</span>
-                  </div>
-                  <div className='stats_info'>
-                    <span>50 (3.1) CS</span>
-                  </div>
-                  <div className='stats_info'>
-                    <span className='stats_kill'>
-                      킬관여
+                  <div className='kda'>
+                    <div className='kda_score'>
+                      {self.map((i) => i.kills)} / <span>{self.map((i) => i.deaths)}</span> /{' '}
+                      {self.map((i) => i.assists)}
+                    </div>
+                    <div className='kda_avg'>
                       {(
-                        ((parseInt(self.map((i) => i.kills).join('')) +
+                        (parseInt(self.map((i) => i.kills).join('')) +
                           parseInt(self.map((i) => i.assists).join(''))) /
-                          totalKill) *
-                        100
-                      ).toFixed(0)}
-                      %
-                    </span>
+                        parseInt(self.map((i) => i.deaths).join(''))
+                      ).toFixed(2)}
+                      :1 <span>평점</span>
+                    </div>
+                    <div className='kda_kill'>
+                      {largestKill !== '1' && (
+                        <span>
+                          {largestKill === '2'
+                            ? '더블킬'
+                            : largestKill === '3'
+                            ? '트리플킬'
+                            : largestKill === '4'
+                            ? '쿼드라킬'
+                            : '펜타킬'}
+                        </span>
+                      )}
+                    </div>
                   </div>
+                  <div className='stats'>
+                    <div className='stats_info'>
+                      <span>레벨{self.map((i) => i.champLevel)}</span>
+                    </div>
+                    <div className='stats_info'>
+                      <span>50 (3.1) CS</span>
+                    </div>
+                    <div className='stats_info'>
+                      <span className='stats_kill'>
+                        킬관여
+                        {(
+                          ((parseInt(self.map((i) => i.kills).join('')) +
+                            parseInt(self.map((i) => i.assists).join(''))) /
+                            totalKill) *
+                          100
+                        ).toFixed(0)}
+                        %
+                      </span>
+                    </div>
+                  </div>
+                  <div className='item'>
+                    <div className='item_list'>
+                      <div className='item'>
+                        {+self.filter((i) => i.item0).join('') !== 0 ? (
+                          <img
+                            src={`${ITEM_IMG}/${self
+                              .filter((i) => i.item0)
+                              .map((i) => i.item0)}.png`}
+                            alt='item0'
+                          />
+                        ) : (
+                          <div className='noneItem'></div>
+                        )}
+                      </div>
+                      <div className='item'>
+                        {+self.filter((i) => i.item1).join('') !== 0 ? (
+                          <img
+                            src={`${ITEM_IMG}/${self
+                              .filter((i) => i.item1)
+                              .map((i) => i.item1)}.png`}
+                            alt='item1'
+                          />
+                        ) : (
+                          <div className='noneItem'></div>
+                        )}
+                      </div>
+                      <div className='item'>
+                        {+self.filter((i) => i.item2).join('') !== 0 ? (
+                          <img
+                            src={`${ITEM_IMG}/${self
+                              .filter((i) => i.item2)
+                              .map((i) => i.item2)}.png`}
+                            alt='item2'
+                          />
+                        ) : (
+                          <div className='noneItem'></div>
+                        )}
+                      </div>
+                      <div className='item'>
+                        {+self.filter((i) => i.item6).join('') !== 0 ? (
+                          <img
+                            src={`${ITEM_IMG}/${self
+                              .filter((i) => i.item6)
+                              .map((i) => i.item6)}.png`}
+                            alt='item6'
+                          />
+                        ) : (
+                          <div className='noneItem'></div>
+                        )}
+                      </div>
+                      <div className='item'>
+                        {+self.filter((i) => i.item3).join('') !== 0 ? (
+                          <img
+                            src={`${ITEM_IMG}/${self
+                              .filter((i) => i.item3)
+                              .map((i) => i.item3)}.png`}
+                            alt='item3'
+                          />
+                        ) : (
+                          <div className='noneItem'></div>
+                        )}
+                      </div>
+                      <div className='item'>
+                        {+self.filter((i) => i.item4).join('') !== 0 ? (
+                          <img
+                            src={`${ITEM_IMG}/${self
+                              .filter((i) => i.item4)
+                              .map((i) => i.item4)}.png`}
+                            alt='item1'
+                          />
+                        ) : (
+                          <div className='noneItem'></div>
+                        )}
+                      </div>
+                      <div className='item'>
+                        {+self.filter((i) => i.item5).join('') !== 0 ? (
+                          <img
+                            src={`${ITEM_IMG}/${self
+                              .filter((i) => i.item5)
+                              .map((i) => i.item5)}.png`}
+                            alt='item1'
+                          />
+                        ) : (
+                          <div className='noneItem'></div>
+                        )}
+                      </div>
+                      <div className='item'>
+                        <div className='noneItem'>
+                          <Icon icon='mdi:magic-staff' className='magic' />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='players'>
+                    <div className='team'>
+                      {redTeam.map((i, idx) => (
+                        <React.Fragment key={idx}>
+                          <div className='summoner'>
+                            <div className='play_champ'>
+                              <img src={`${CHAMP_IMG}/${i.championName}.png`} alt='champ' />
+                            </div>
+                            <div className='player_name'>
+                              <span>{i.summonerName}</span>
+                            </div>
+                          </div>
+                        </React.Fragment>
+                      ))}
+                    </div>
+                    <div className='team'>
+                      {blueTeam.map((i, idx) => (
+                        <React.Fragment key={idx}>
+                          <div className='summoner'>
+                            <div className='play_champ'>
+                              <img src={`${CHAMP_IMG}/${i.championName}.png`} alt='champ' />
+                            </div>
+                            <div className='player_name'>
+                              <span>{i.summonerName}</span>
+                            </div>
+                          </div>
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  </div>
+                  <div className='stats_btn'></div>
                 </div>
-                <div className='item'>
-                  <div className='item_list'>
-                    <div className='item'>
-                      {+self.filter((i) => i.item0).join('') !== 0 ? (
-                        <img
-                          src={`${ITEM_IMG}/${self.filter((i) => i.item0).map((i) => i.item0)}.png`}
-                          alt='item0'
-                        />
-                      ) : (
-                        <div className='noneItem'></div>
-                      )}
-                    </div>
-                    <div className='item'>
-                      {+self.filter((i) => i.item1).join('') !== 0 ? (
-                        <img
-                          src={`${ITEM_IMG}/${self.filter((i) => i.item1).map((i) => i.item1)}.png`}
-                          alt='item1'
-                        />
-                      ) : (
-                        <div className='noneItem'></div>
-                      )}
-                    </div>
-                    <div className='item'>
-                      {+self.filter((i) => i.item2).join('') !== 0 ? (
-                        <img
-                          src={`${ITEM_IMG}/${self.filter((i) => i.item2).map((i) => i.item2)}.png`}
-                          alt='item2'
-                        />
-                      ) : (
-                        <div className='noneItem'></div>
-                      )}
-                    </div>
-                    <div className='item'>
-                      {+self.filter((i) => i.item6).join('') !== 0 ? (
-                        <img
-                          src={`${ITEM_IMG}/${self.filter((i) => i.item6).map((i) => i.item6)}.png`}
-                          alt='item6'
-                        />
-                      ) : (
-                        <div className='noneItem'></div>
-                      )}
-                    </div>
-                    <div className='item'>
-                      {+self.filter((i) => i.item3).join('') !== 0 ? (
-                        <img
-                          src={`${ITEM_IMG}/${self.filter((i) => i.item3).map((i) => i.item3)}.png`}
-                          alt='item3'
-                        />
-                      ) : (
-                        <div className='noneItem'></div>
-                      )}
-                    </div>
-                    <div className='item'>
-                      {+self.filter((i) => i.item4).join('') !== 0 ? (
-                        <img
-                          src={`${ITEM_IMG}/${self.filter((i) => i.item4).map((i) => i.item4)}.png`}
-                          alt='item1'
-                        />
-                      ) : (
-                        <div className='noneItem'></div>
-                      )}
-                    </div>
-                    <div className='item'>
-                      {+self.filter((i) => i.item5).join('') !== 0 ? (
-                        <img
-                          src={`${ITEM_IMG}/${self.filter((i) => i.item5).map((i) => i.item5)}.png`}
-                          alt='item1'
-                        />
-                      ) : (
-                        <div className='noneItem'></div>
-                      )}
-                    </div>
-                    <div className='item'>
-                      <div className='noneItem'>
-                        <Icon icon='mdi:magic-staff' className='magic' />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className='players'>
-                  <div className='team'>
-                    <div className='summoner'>
-                      <div className='play_champ'>
-                        <img src='' alt='champ' />
-                      </div>
-                      <div className='player_name'>
-                        <span>정신병돋음</span>
-                      </div>
-                    </div>
-                    <div className='summoner'>
-                      <div className='play_champ'>
-                        <img src='' alt='champ' />
-                      </div>
-                      <div className='player_name'>
-                        <span>정신병돋음</span>
-                      </div>
-                    </div>
-                    <div className='summoner'>
-                      <div className='play_champ'>
-                        <img src='' alt='champ' />
-                      </div>
-                      <div className='player_name'>
-                        <span>정신병돋음</span>
-                      </div>
-                    </div>
-                    <div className='summoner'>
-                      <div className='play_champ'>
-                        <img src='' alt='champ' />
-                      </div>
-                      <div className='player_name'>
-                        <span>정신병돋음</span>
-                      </div>
-                    </div>
-                    <div className='summoner'>
-                      <div className='play_champ'>
-                        <img src='' alt='champ' />
-                      </div>
-                      <div className='player_name'>
-                        <span>정신병돋음asdasd</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='team'>
-                    <div className='summoner'>
-                      <div className='play_champ'>
-                        <img src='' alt='champ' />
-                      </div>
-                      <div className='player_name'>
-                        <span>정신병돋음</span>
-                      </div>
-                    </div>
-                    <div className='summoner'>
-                      <div className='play_champ'>
-                        <img src='' alt='champ' />
-                      </div>
-                      <div className='player_name'>
-                        <span>정신병돋음</span>
-                      </div>
-                    </div>
-                    <div className='summoner'>
-                      <div className='play_champ'>
-                        <img src='' alt='champ' />
-                      </div>
-                      <div className='player_name'>
-                        <span>정신병돋음</span>
-                      </div>
-                    </div>
-                    <div className='summoner'>
-                      <div className='play_champ'>
-                        <img src='' alt='champ' />
-                      </div>
-                      <div className='player_name'>
-                        <span>정신병돋음</span>
-                      </div>
-                    </div>
-                    <div className='summoner'>
-                      <div className='play_champ'>
-                        <img src='' alt='champ' />
-                      </div>
-                      <div className='player_name'>
-                        <span>정신병돋음asdasd</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className='stats_btn'></div>
               </div>
             </div>
-          </div>
+          </React.Fragment>
         )
       })}
     </>

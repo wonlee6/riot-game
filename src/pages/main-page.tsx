@@ -5,8 +5,8 @@ import getSummonerAuthResponseDataModel from '../service/summoner/model/get-summ
 import '../styles/main_page.scss'
 import ReactiveButton from 'reactive-button'
 import Nav from '../components/nav'
-import SummonerInfoPage from './summoner-info-page'
 import Match from './match'
+import SummonerInfo from './summoner-info'
 
 const MainPage = () => {
   const [search_name, setSearchName] = useState<string>('')
@@ -98,7 +98,7 @@ const MainPage = () => {
         </div>
         {summoner_data.length > 0 && (
           <div className='summoner_info_container'>
-            <SummonerInfoPage summoner_data={summoner_data} />
+            <SummonerInfo summoner_data={summoner_data} />
             <div className='match_container'>
               {/* <ChampionMasteries uid={summoner_data[0]?.summonerId} /> */}
               <div className='most_champ_box'></div>
