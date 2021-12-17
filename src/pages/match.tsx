@@ -5,6 +5,7 @@ import { CHAMP_IMG, ITEM_IMG, RUNES_IMG, SPELL_IMG } from '../function/api-const
 import { fromNowDate, second2MS } from '../function/function'
 import API from '../service/api'
 import GetDetailMatchResponseDataModel from '../service/match/model/get-detail-match-response-data-model'
+import GetRunesResponseDataModel from '../service/runes/model/get-runes-response-data-model'
 import GetSpellResponseDataModel from '../service/spell/model/get-spell-response-data-model'
 import '../styles/match.scss'
 
@@ -32,6 +33,8 @@ export default function Match({ puuid, search_name }: MatchModel) {
   )
   // spell data
   const [spell_data, setSpellData] = useState<GetSpellResponseDataModel>()
+  // runes data
+  const [runes_data, setRunesData] = useState<Array<GetRunesResponseDataModel>>([])
 
   // function
 
@@ -85,6 +88,16 @@ export default function Match({ puuid, search_name }: MatchModel) {
       .catch((err) => console.log(err))
   }
 
+  // 룬 정보 가져오기
+  const runes = async () => {
+    await API.runes
+      .runes()
+      .then((res) => {
+        setRunesData(res.data)
+      })
+      .catch((err) => console.log(err))
+  }
+
   useEffect(() => {
     if (puuid) {
       getMatches()
@@ -99,6 +112,7 @@ export default function Match({ puuid, search_name }: MatchModel) {
 
   useEffect(() => {
     spell()
+    runes()
   }, [])
 
   // 배열 정렬
@@ -160,6 +174,14 @@ export default function Match({ puuid, search_name }: MatchModel) {
           ?.filter((item: SpellDataModel) => item.key === spell2)
           .map((i: SpellDataModel) => i.image.full)
 
+        const mainRunes = self.map((i) => i.perks.styles)[0][0].style
+        const subRunes = self.map((i) => i.perks.styles)[0][1].style
+
+        const mainRunes_img = runes_data
+          ?.filter((i) => i.id === mainRunes)
+          .map((i) => i.slots[0].runes[0].icon)
+
+        const subRunes_img = runes_data?.filter((i) => i.id === subRunes).map((i) => i.icon)
         return (
           <div className='match_item' key={index}>
             <div className='match_wrap'>
@@ -193,13 +215,10 @@ export default function Match({ puuid, search_name }: MatchModel) {
                     </div>
                     <div className='runes'>
                       <div className='runes_item'>
-                        <img
-                          src={`${RUNES_IMG}/Domination/DarkHarvest/DarkHarvest.png`}
-                          alt='runes'
-                        />
+                        <img src={`${RUNES_IMG}/${mainRunes_img}`} alt='runes' />
                       </div>
                       <div className='runes_item'>
-                        <img src={`${RUNES_IMG}/7202_Sorcery.png`} alt='spell' />
+                        <img src={`${RUNES_IMG}/${subRunes_img}`} alt='spell' />
                       </div>
                     </div>
                   </div>
