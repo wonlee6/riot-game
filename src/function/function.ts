@@ -51,7 +51,7 @@ export const second2MS = (e: number): string => {
 
 // moment
 // 2 days ago => 2일 전
-export const fromNowData = (e: string) => {
+export const fromNowDate = (e: string) => {
   const date = e.split(' ')
   if (date[1] === 'days') {
     if (date[0] === 'a') {

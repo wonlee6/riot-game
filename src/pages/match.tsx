@@ -1,8 +1,8 @@
 import { Icon } from '@iconify/react'
 import moment from 'moment'
 import React, { useEffect, useMemo, useState } from 'react'
-import { CHAMP_URL, ITEM_IMG, RUNES_IMG, SPELL_URL } from '../function/api-constant'
-import { fromNowData, second2MS } from '../function/function'
+import { CHAMP_IMG, ITEM_IMG, RUNES_IMG, SPELL_IMG } from '../function/api-constant'
+import { fromNowDate, second2MS } from '../function/function'
 import API from '../service/api'
 import GetDetailMatchResponseDataModel from '../service/match/model/get-detail-match-response-data-model'
 import '../styles/match.scss'
@@ -108,7 +108,7 @@ export default function Match({ puuid, search_name }: MatchModel) {
                   <div className='game_type'>
                     <span>{item.info.gameMode === 'ARAM' ? '칼바람 나락' : '일반'}</span>
                   </div>
-                  <div className='game_time'>{fromNowData(gameCreation)}</div>
+                  <div className='game_time'>{fromNowDate(gameCreation)}</div>
                   <div className='bar'></div>
                   <div className={`game_result ${win === 'true' ? 'win' : 'lose'}`}>
                     {win === 'true' ? '승리' : '패배'}
@@ -119,16 +119,16 @@ export default function Match({ puuid, search_name }: MatchModel) {
                   <div className='info_box'>
                     <div className='cham_img'>
                       <img
-                        src={`${CHAMP_URL}/${self.map((i) => i.championName)}.png`}
+                        src={`${CHAMP_IMG}/${self.map((i) => i.championName)}.png`}
                         alt='champ_img'
                       />
                     </div>
                     <div className='spell'>
                       <div className='spell_item'>
-                        <img src={`${SPELL_URL}/SummonerExhaust.png`} alt='spell' />
+                        <img src={`${SPELL_IMG}/SummonerExhaust.png`} alt='spell' />
                       </div>
                       <div className='spell_item'>
-                        <img src={`${SPELL_URL}/SummonerFlash.png`} alt='spell' />
+                        <img src={`${SPELL_IMG}/SummonerFlash.png`} alt='spell' />
                       </div>
                     </div>
                     <div className='runes'>
