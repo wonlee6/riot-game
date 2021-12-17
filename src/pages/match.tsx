@@ -5,12 +5,22 @@ import { CHAMP_IMG, ITEM_IMG, RUNES_IMG, SPELL_IMG } from '../function/api-const
 import { fromNowDate, second2MS } from '../function/function'
 import API from '../service/api'
 import GetDetailMatchResponseDataModel from '../service/match/model/get-detail-match-response-data-model'
+import GetSpellResponseDataModel from '../service/spell/model/get-spell-response-data-model'
 import '../styles/match.scss'
 
 type MatchModel = {
   puuid: string | undefined
   search_name: string
 }
+type SpellDataModel = {
+  key: string
+  name: string
+  description: string
+  image: {
+    full: string
+  }
+}
+
 export default function Match({ puuid, search_name }: MatchModel) {
   const [count, setCount] = useState(20)
 
@@ -20,6 +30,8 @@ export default function Match({ puuid, search_name }: MatchModel) {
   const [detail_match_data, setDetailMatchData] = useState<Array<GetDetailMatchResponseDataModel>>(
     []
   )
+  // spell data
+  const [spell_data, setSpellData] = useState<GetSpellResponseDataModel>()
 
   // function
 
@@ -59,6 +71,20 @@ export default function Match({ puuid, search_name }: MatchModel) {
     }
   }
 
+  // spell 정보 가져오기
+  const spell = async () => {
+    if (spell_data) return
+    await API.spell
+      .spell()
+      .then((res) => {
+        if (res.status === 200) {
+          const data = res.data.data
+          setSpellData(data)
+        }
+      })
+      .catch((err) => console.log(err))
+  }
+
   useEffect(() => {
     if (puuid) {
       getMatches()
@@ -71,10 +97,36 @@ export default function Match({ puuid, search_name }: MatchModel) {
     }
   }, [match_list_data.length > 0])
 
+  useEffect(() => {
+    spell()
+  }, [])
+
   // 배열 정렬
   const filtered_data = useMemo(() => {
     return [...detail_match_data].sort((a, b) => b.info.gameCreation - a.info.gameCreation)
   }, [detail_match_data])
+
+  // spell info data
+  const filtered_spell_data = useMemo(() => {
+    const result = [] as any
+    result.push(spell_data?.SummonerBarrier)
+    result.push(spell_data?.SummonerBoost)
+    result.push(spell_data?.SummonerDot)
+    result.push(spell_data?.SummonerExhaust)
+    result.push(spell_data?.SummonerFlash)
+    result.push(spell_data?.SummonerHaste)
+    result.push(spell_data?.SummonerHeal)
+    result.push(spell_data?.SummonerMana)
+    result.push(spell_data?.SummonerPoroRecall)
+    result.push(spell_data?.SummonerPoroThrow)
+    result.push(spell_data?.SummonerSmite)
+    result.push(spell_data?.SummonerSnowURFSnowball_Mark)
+    result.push(spell_data?.SummonerSnowball)
+    result.push(spell_data?.SummonerTeleport)
+    result.push(spell_data?.Summoner_UltBookPlaceholder)
+    result.push(spell_data?.Summoner_UltBookSmitePlaceholder)
+    return result
+  }, [spell_data])
 
   useEffect(() => {
     console.log(filtered_data)
@@ -93,12 +145,20 @@ export default function Match({ puuid, search_name }: MatchModel) {
           .map((i) => i.kills)
           .reduce((acc, cur) => acc + cur, 0)
 
-        const largestKill = self
-          .filter((i) => i.largestMultiKill)
-          .map((i) => i.largestMultiKill)
-          .join('')
+        const largestKill = self.map((i) => i.largestMultiKill).join('')
 
         const gameCreation = moment(item.info.gameCreation).fromNow()
+
+        const spell1 = self.map((i) => i.summoner1Id).join('')
+        const spell2 = self.map((i) => i.summoner2Id).join('')
+
+        const spell1_img = filtered_spell_data
+          ?.filter((item: SpellDataModel) => item.key === spell1)
+          .map((i: SpellDataModel) => i.image.full)
+
+        const spell2_img = filtered_spell_data
+          ?.filter((item: SpellDataModel) => item.key === spell2)
+          .map((i: SpellDataModel) => i.image.full)
 
         return (
           <div className='match_item' key={index}>
@@ -125,10 +185,10 @@ export default function Match({ puuid, search_name }: MatchModel) {
                     </div>
                     <div className='spell'>
                       <div className='spell_item'>
-                        <img src={`${SPELL_IMG}/SummonerExhaust.png`} alt='spell' />
+                        <img src={`${SPELL_IMG}/${spell1_img}`} alt='spell' />
                       </div>
                       <div className='spell_item'>
-                        <img src={`${SPELL_IMG}/SummonerFlash.png`} alt='spell' />
+                        <img src={`${SPELL_IMG}/${spell2_img}`} alt='spell2' />
                       </div>
                     </div>
                     <div className='runes'>
