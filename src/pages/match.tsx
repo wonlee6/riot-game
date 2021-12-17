@@ -1,7 +1,8 @@
 import { Icon } from '@iconify/react'
+import moment from 'moment'
 import React, { useEffect, useMemo, useState } from 'react'
 import { CHAMP_URL, ITEM_IMG, RUNES_IMG, SPELL_URL } from '../function/api-constant'
-import { second2MS } from '../function/function'
+import { fromNowData, second2MS } from '../function/function'
 import API from '../service/api'
 import GetDetailMatchResponseDataModel from '../service/match/model/get-detail-match-response-data-model'
 import '../styles/match.scss'
@@ -97,15 +98,17 @@ export default function Match({ puuid, search_name }: MatchModel) {
           .map((i) => i.largestMultiKill)
           .join('')
 
+        const gameCreation = moment(item.info.gameCreation).fromNow()
+
         return (
-          <div className='match_item'>
+          <div className='match_item' key={index}>
             <div className='match_wrap'>
               <div className={`content ${win === 'true' ? 'Win' : 'Lose'}`}>
                 <div className='game_stats'>
                   <div className='game_type'>
                     <span>{item.info.gameMode === 'ARAM' ? '칼바람 나락' : '일반'}</span>
                   </div>
-                  <div className='game_time'>18시간전</div>
+                  <div className='game_time'>{fromNowData(gameCreation)}</div>
                   <div className='bar'></div>
                   <div className={`game_result ${win === 'true' ? 'win' : 'lose'}`}>
                     {win === 'true' ? '승리' : '패배'}
