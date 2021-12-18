@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react'
 import moment from 'moment'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { SetStateAction, useEffect, useMemo, useState } from 'react'
 import { CHAMP_IMG, ITEM_IMG, RUNES_IMG, SPELL_IMG } from '../function/api-constant'
 import { fromNowDate, second2MS } from '../function/function'
 import API from '../service/api'
@@ -12,6 +12,12 @@ import '../styles/match.scss'
 type MatchModel = {
   puuid: string | undefined
   search_name: string
+  setTotalResult: React.Dispatch<SetStateAction<TotalResultModel>>
+}
+
+export type TotalResultModel = {
+  win: number
+  lose: number
 }
 type SpellDataModel = {
   key: string
@@ -29,7 +35,7 @@ type ChampionDataModel = {
   }
 }
 
-export default function Match({ puuid, search_name }: MatchModel) {
+export default function Match({ puuid, search_name, setTotalResult }: MatchModel) {
   const [count, setCount] = useState(20)
 
   // match data
@@ -141,6 +147,28 @@ export default function Match({ puuid, search_name }: MatchModel) {
     return [...detail_match_data].sort((a, b) => b.info.gameCreation - a.info.gameCreation)
   }, [detail_match_data])
 
+  const filtered_total_result_data = useMemo(() => {
+    const self = [...detail_match_data]
+      .map((i) => i.info.participants.filter((v) => v.summonerName.includes(search_name)))
+      .map((i) => i.map((i) => i.win))
+      .reduce((acc, cur) => acc.concat(cur), [])
+      .reduce((acc: any, cur: any) => {
+        acc[cur] = (acc[cur] || 0) + 1
+        return acc
+      }, {})
+
+    return self
+  }, [detail_match_data])
+
+  useEffect(() => {
+    if (filtered_total_result_data) {
+      setTotalResult({
+        win: filtered_total_result_data.true,
+        lose: filtered_total_result_data.false,
+      })
+    }
+  }, [filtered_total_result_data])
+
   // spell info data
   const filtered_spell_data = useMemo(() => {
     const result = [] as any
@@ -168,8 +196,6 @@ export default function Match({ puuid, search_name }: MatchModel) {
       return Object.values(champion_data)
     }
   }, [champion_data])
-
-  // console.log(filtered_champ_data)
 
   return (
     <>

@@ -14,6 +14,7 @@ const MainPage = () => {
   const [btn_state, setBtnState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const btn_ref: React.MutableRefObject<null | HTMLButtonElement> = useRef(null)
 
+  const [is_summoner, setIsSummoner] = useState<boolean>(false)
   /**
    *  API State
    */
@@ -21,6 +22,11 @@ const MainPage = () => {
   const [summoner_auth_data, setSummonerAuthData] = useState<getSummonerAuthResponseDataModel>()
   // 서머너 league 데이터
   const [summoner_data, setSummonerData] = useState<Array<getLeagueResponseDataModel>>([])
+  // 총 전적
+  const [total_result, setTotalResult] = useState({
+    win: 0,
+    lose: 0,
+  })
 
   /**
    *  function
@@ -46,7 +52,6 @@ const MainPage = () => {
         }
       })
       .catch((err) => {
-        console.log(err)
         setTimeout(() => setBtnState('error'), 1000)
       })
   }
@@ -58,6 +63,7 @@ const MainPage = () => {
       .then((res) => {
         if (res.status === 200) {
           setSummonerData(res.data)
+          setIsSummoner(true)
         }
       })
       .catch((err) => console.log(err))
@@ -73,7 +79,7 @@ const MainPage = () => {
     <>
       <Nav />
       <div className='container'>
-        <div className={summoner_data.length > 0 ? `search_box m-top-50` : 'search_box'}>
+        <div className={is_summoner === true ? `search_box m-top-50` : 'search_box'}>
           <input
             type='text'
             className='search_input'
@@ -103,10 +109,14 @@ const MainPage = () => {
             <div className='match_container'>
               {/* <ChampionMasteries uid={summoner_data[0]?.summonerId} /> */}
               <div className='most_champ_box'>
-                <Summoner summoner_data={summoner_data} />
+                <Summoner summoner_data={summoner_data} total_result={total_result} />
               </div>
               <div className='match_list_box'>
-                <Match puuid={summoner_auth_data?.puuid} search_name={search_name} />
+                <Match
+                  puuid={summoner_auth_data?.puuid}
+                  search_name={search_name}
+                  setTotalResult={setTotalResult}
+                />
               </div>
             </div>
           </div>

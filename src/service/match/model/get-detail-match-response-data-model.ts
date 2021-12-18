@@ -10,6 +10,9 @@ export default interface GetDetailMatchResponseDataModel {
     gameType: string
     gameVersion: string
     mapId: number
+    teams: {
+      win: boolean
+    }[]
     participants: [
       {
         assists: number

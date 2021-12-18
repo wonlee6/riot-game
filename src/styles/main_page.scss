@@ -111,6 +111,9 @@
       width: 100%;
       .most_champ_box {
         width: 30%;
+        display: flex;
+        flex-direction: column;
+        padding: 8px;
       }
       .match_list_box {
         width: 70%;
