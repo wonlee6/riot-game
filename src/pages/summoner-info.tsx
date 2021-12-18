@@ -21,7 +21,6 @@ const SummonerInfo = ({ summoner_data }: SummonerInfoPageModel) => {
     await API.league
       .leagues(summoner_data[0].leagueId)
       .then((res) => {
-        console.log(res)
         setLeagueName(res.data.name)
       })
       .catch((err) => console.log(err))

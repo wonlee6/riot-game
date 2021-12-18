@@ -22,6 +22,13 @@ type SpellDataModel = {
   }
 }
 
+type ChampionDataModel = {
+  [e: string]: {
+    id: string
+    name: string
+  }
+}
+
 export default function Match({ puuid, search_name }: MatchModel) {
   const [count, setCount] = useState(20)
 
@@ -35,7 +42,8 @@ export default function Match({ puuid, search_name }: MatchModel) {
   const [spell_data, setSpellData] = useState<GetSpellResponseDataModel>()
   // runes data
   const [runes_data, setRunesData] = useState<Array<GetRunesResponseDataModel>>([])
-
+  // champion data
+  const [champion_data, setChampionData] = useState<ChampionDataModel>()
   // function
 
   /**
@@ -98,6 +106,18 @@ export default function Match({ puuid, search_name }: MatchModel) {
       .catch((err) => console.log(err))
   }
 
+  // 챔피언 이름 가져오기
+  const champion = async () => {
+    await API.champion
+      .champion()
+      .then((res) => {
+        if (res.status === 200) {
+          setChampionData(res.data.data)
+        }
+      })
+      .catch((err) => console.log(err))
+  }
+
   useEffect(() => {
     if (puuid) {
       getMatches()
@@ -113,6 +133,7 @@ export default function Match({ puuid, search_name }: MatchModel) {
   useEffect(() => {
     spell()
     runes()
+    champion()
   }, [])
 
   // 배열 정렬
@@ -142,6 +163,14 @@ export default function Match({ puuid, search_name }: MatchModel) {
     return result
   }, [spell_data])
 
+  const filtered_champ_data = useMemo(() => {
+    if (champion_data) {
+      return Object.values(champion_data)
+    }
+  }, [champion_data])
+
+  // console.log(filtered_champ_data)
+
   return (
     <>
       {filtered_data?.map((item, index) => {
@@ -159,6 +188,9 @@ export default function Match({ puuid, search_name }: MatchModel) {
         const largestKill = self.map((i) => i.largestMultiKill).join('')
 
         const gameCreation = moment(item.info.gameCreation).fromNow()
+
+        const champion_name = self.map((i) => i.championName).join('')
+        const name = filtered_champ_data?.filter((v) => v.id === champion_name).map((i) => i.name)
 
         const spell1 = self.map((i) => i.summoner1Id).join('')
         const spell2 = self.map((i) => i.summoner2Id).join('')
@@ -225,7 +257,7 @@ export default function Match({ puuid, search_name }: MatchModel) {
                       </div>
                     </div>
                     <div className='champ_name'>
-                      <span>벨코즈</span>
+                      <span>{name}</span>
                     </div>
                   </div>
                   <div className='kda'>
@@ -259,9 +291,7 @@ export default function Match({ puuid, search_name }: MatchModel) {
                     <div className='stats_info'>
                       <span>레벨{self.map((i) => i.champLevel)}</span>
                     </div>
-                    <div className='stats_info'>
-                      <span>50 (3.1) CS</span>
-                    </div>
+
                     <div className='stats_info'>
                       <span className='stats_kill'>
                         킬관여

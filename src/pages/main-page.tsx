@@ -7,6 +7,7 @@ import ReactiveButton from 'reactive-button'
 import Nav from '../components/nav'
 import Match from './match'
 import SummonerInfo from './summoner-info'
+import Summoner from '../components/summoner'
 
 const MainPage = () => {
   const [search_name, setSearchName] = useState<string>('')
@@ -72,7 +73,7 @@ const MainPage = () => {
     <>
       <Nav />
       <div className='container'>
-        <div className='search_box'>
+        <div className={summoner_data.length > 0 ? `search_box m-top-50` : 'search_box'}>
           <input
             type='text'
             className='search_input'
@@ -101,7 +102,9 @@ const MainPage = () => {
             <SummonerInfo summoner_data={summoner_data} />
             <div className='match_container'>
               {/* <ChampionMasteries uid={summoner_data[0]?.summonerId} /> */}
-              <div className='most_champ_box'></div>
+              <div className='most_champ_box'>
+                <Summoner summoner_data={summoner_data} />
+              </div>
               <div className='match_list_box'>
                 <Match puuid={summoner_auth_data?.puuid} search_name={search_name} />
               </div>
