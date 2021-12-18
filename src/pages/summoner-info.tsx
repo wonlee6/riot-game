@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import Bronze from '../styles/tier_icon/Emblem_Bronze.png'
 import Silver from '../styles/tier_icon/Emblem_Silver.png'
 import Platinum from '../styles/tier_icon/Emblem_Platinum.png'
@@ -10,12 +10,18 @@ import Diamond from '../styles/tier_icon/Emblem_Diamond.png'
 import Challenger from '../styles/tier_icon/Emblem_Challenger.png'
 import getLeagueResponseDataModel from '../service/summoner/model/get-league-response-data-model'
 import API from '../service/api'
+import { SUMMONER_ICON_URL } from '../function/api-constant'
+import getSummonerAuthResponseDataModel from '../service/summoner/model/get-summoner-auth-response-data-model'
+import ReactiveButton from 'reactive-button'
 
 type SummonerInfoPageModel = {
   summoner_data: Array<getLeagueResponseDataModel>
+  summoner_auth_data?: getSummonerAuthResponseDataModel
 }
-const SummonerInfo = ({ summoner_data }: SummonerInfoPageModel) => {
+const SummonerInfo = ({ summoner_data, summoner_auth_data }: SummonerInfoPageModel) => {
   const [league_name, setLeagueName] = useState<string>('')
+  const [btn_state, setBtnState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const btn_ref: React.MutableRefObject<null | HTMLButtonElement> = useRef(null)
 
   const league = async () => {
     await API.league
@@ -77,7 +83,30 @@ const SummonerInfo = ({ summoner_data }: SummonerInfoPageModel) => {
             </div>
           </div>
         </div>
-        <div className='graph_box'></div>
+        <div className='summoner_box'>
+          <img src={`${SUMMONER_ICON_URL}/${summoner_auth_data?.profileIconId}.png`} alt='' />
+          <div className='info_box'>
+            <div className='info_data'>
+              <span className='name'>{summoner_auth_data?.name}</span>
+            </div>
+            <div className='info_data'>
+              <span>Level : {summoner_auth_data?.summonerLevel}</span>
+            </div>
+            <div className='info_data'>
+              <ReactiveButton
+                animation={true}
+                height={'100%'}
+                buttonState={btn_state}
+                buttonRef={btn_ref}
+                width={'100%'}
+                onClick={() => {}}
+                idleText='인게임 정보'
+                successText='성공!'
+                color='primary'
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </>
   )

@@ -12,6 +12,9 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  .search_box.m-top-50 {
+    margin-top: 50;
+  }
   .search_box {
     display: flex;
     justify-content: center;
@@ -79,8 +82,27 @@
           }
         }
       }
-      .graph_box {
+      .summoner_box {
         width: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        text-align: center;
+        img {
+          height: 130px;
+          border-radius: 10px;
+        }
+        .info_box {
+          .info_data {
+            padding: 4px;
+
+            .name {
+              font-size: 20px;
+              font-weight: 700;
+              color: #242929;
+            }
+          }
+        }
       }
     }
 
@@ -96,8 +118,4 @@
       }
     }
   }
-}
-
-.m-top-50 {
-  margin-top: 50;
 }
