@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { ResponsivePie } from '@nivo/pie'
-import { TotalResultModel } from '../../pages/match'
+import { TotalResultModel } from '../match'
 
 type PieModel = {
   total_result: TotalResultModel

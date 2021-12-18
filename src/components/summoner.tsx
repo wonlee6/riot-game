@@ -1,4 +1,5 @@
-import { TotalResultModel } from '../pages/match'
+import ChampionMasteries from './champion-masteries'
+import { TotalResultModel } from './match'
 import getLeagueResponseDataModel from '../service/summoner/model/get-league-response-data-model'
 import '../styles/summoner.scss'
 import Pie from './graph/pie'
@@ -28,7 +29,9 @@ export default function Summoner({ summoner_data, total_result }: SummonerModel)
         </div>
         <div className='recent_result'></div>
       </div>
-      <div className='champ_box'></div>
+      {/* <div className='champ_box'>
+        <ChampionMasteries uid={summoner_data[0]?.summonerId} />
+      </div> */}
     </>
   )
 }

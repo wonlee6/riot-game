@@ -5,8 +5,8 @@ import getSummonerAuthResponseDataModel from '../service/summoner/model/get-summ
 import '../styles/main_page.scss'
 import ReactiveButton from 'reactive-button'
 import Nav from '../components/nav'
-import Match from './match'
-import SummonerInfo from './summoner-info'
+import Match from '../components/match'
+import SummonerInfo from '../components/summoner-info'
 import Summoner from '../components/summoner'
 
 const MainPage = () => {
@@ -42,6 +42,7 @@ const MainPage = () => {
   const searchSummoner = async () => {
     if (search_name === '') return
     setBtnState('loading')
+    setIsSummoner(true)
 
     await API.summoner //
       .searchSummoner(search_name)
@@ -52,6 +53,7 @@ const MainPage = () => {
         }
       })
       .catch((err) => {
+        console.log(err)
         setTimeout(() => setBtnState('error'), 1000)
       })
   }
@@ -63,7 +65,6 @@ const MainPage = () => {
       .then((res) => {
         if (res.status === 200) {
           setSummonerData(res.data)
-          setIsSummoner(true)
         }
       })
       .catch((err) => console.log(err))
@@ -78,8 +79,8 @@ const MainPage = () => {
   return (
     <>
       <Nav />
-      <div className='container'>
-        <div className={is_summoner === true ? `search_box m-top-50` : 'search_box'}>
+      <div className={is_summoner === true ? `container p-t-m-t` : 'container'}>
+        <div className='search_box'>
           <input
             type='text'
             className='search_input'
@@ -107,7 +108,6 @@ const MainPage = () => {
           <div className='summoner_info_container'>
             <SummonerInfo summoner_data={summoner_data} summoner_auth_data={summoner_auth_data} />
             <div className='match_container'>
-              {/* <ChampionMasteries uid={summoner_data[0]?.summonerId} /> */}
               <div className='most_champ_box'>
                 <Summoner summoner_data={summoner_data} total_result={total_result} />
               </div>
