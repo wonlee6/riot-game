@@ -11,6 +11,7 @@ import Summoner from '../components/summoner'
 
 const MainPage = () => {
   const [search_name, setSearchName] = useState<string>('')
+  const [summoner_name, setSummonerName] = useState<string>('')
   const [btn_state, setBtnState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const btn_ref: React.MutableRefObject<null | HTMLButtonElement> = useRef(null)
 
@@ -32,24 +33,25 @@ const MainPage = () => {
    *  function
    */
   const handleEnther = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') searchSummoner()
+    if (e.key === 'Enter') searchSummoner(search_name)
   }
 
   /**
    *  API Request
    */
   // 서머너 검색
-  const searchSummoner = async () => {
+  const searchSummoner = async (name: string) => {
     if (search_name === '') return
     setBtnState('loading')
     setIsSummoner(true)
 
     await API.summoner //
-      .searchSummoner(search_name)
+      .searchSummoner(name)
       .then((res) => {
         if (res.status === 200) {
           setBtnState('success')
           setSummonerAuthData(res.data)
+          setSummonerName(res.data.name)
         }
       })
       .catch((err) => {
@@ -98,7 +100,7 @@ const MainPage = () => {
             buttonState={btn_state}
             buttonRef={btn_ref}
             width={'20%'}
-            onClick={searchSummoner}
+            onClick={() => searchSummoner(search_name)}
             idleText='검색하기'
             successText='성공!'
             color='blue'
@@ -114,7 +116,7 @@ const MainPage = () => {
               <div className='match_list_box'>
                 <Match
                   puuid={summoner_auth_data?.puuid}
-                  search_name={search_name}
+                  summoner_name={summoner_name}
                   setTotalResult={setTotalResult}
                 />
               </div>

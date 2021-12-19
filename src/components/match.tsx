@@ -11,7 +11,7 @@ import '../styles/match.scss'
 
 type MatchModel = {
   puuid: string | undefined
-  search_name: string
+  summoner_name: string
   setTotalResult: React.Dispatch<SetStateAction<TotalResultModel>>
 }
 
@@ -35,8 +35,10 @@ type ChampionDataModel = {
   }
 }
 
-export default function Match({ puuid, search_name, setTotalResult }: MatchModel) {
+export default function Match({ puuid, summoner_name, setTotalResult }: MatchModel) {
   const [count, setCount] = useState(20)
+
+  const [is_matches, setIsMatches] = useState(false)
 
   // match data
   const [match_list_data, setMatchListData] = useState([])
@@ -59,11 +61,13 @@ export default function Match({ puuid, search_name, setTotalResult }: MatchModel
   // match 정보 가져오기
   const getMatches = async () => {
     if (puuid) {
+      setIsMatches(true)
       await API.match
         .matches(puuid, count)
         .then((res) => {
           if (res.status === 200) {
             setMatchListData(res.data)
+            setIsMatches(false)
           }
         })
         .catch((err) => console.log(err))
@@ -128,13 +132,13 @@ export default function Match({ puuid, search_name, setTotalResult }: MatchModel
     if (puuid) {
       getMatches()
     }
-  }, [puuid])
+  }, [])
 
   useEffect(() => {
-    if (detail_match_data.length <= 19) {
+    if (match_list_data.length > 0) {
       getDetailMatchData()
     }
-  }, [match_list_data.length > 0])
+  }, [match_list_data])
 
   useEffect(() => {
     spell()
@@ -144,12 +148,12 @@ export default function Match({ puuid, search_name, setTotalResult }: MatchModel
 
   // 배열 정렬
   const filtered_data = useMemo(() => {
-    return [...detail_match_data].sort((a, b) => b.info.gameCreation - a.info.gameCreation)
-  }, [detail_match_data])
+    return detail_match_data.sort((a, b) => b.info.gameCreation - a.info.gameCreation)
+  }, [detail_match_data, match_list_data])
 
   const filtered_total_result_data = useMemo(() => {
     const self = [...detail_match_data]
-      .map((i) => i.info.participants.filter((v) => v.summonerName.includes(search_name)))
+      .map((i) => i.info.participants.filter((v) => v.summonerName.includes(summoner_name)))
       .map((i) => i.map((i) => i.win))
       .reduce((acc, cur) => acc.concat(cur), [])
       .reduce((acc: any, cur: any) => {
@@ -200,11 +204,13 @@ export default function Match({ puuid, search_name, setTotalResult }: MatchModel
   return (
     <>
       {filtered_data?.map((item, index) => {
-        const self = item.info.participants.filter((i) => i.summonerName.includes(search_name))
+        const self = item.info.participants.filter((i) => i.summonerName.includes(summoner_name))
         const win = item.info.participants
-          .filter((i) => i.summonerName.includes(search_name))
+          .filter((i) => i.summonerName.includes(summoner_name))
           .map((i) => i.win)
           .join('')
+
+        const queueId = item.info.queueId
 
         const totalKill = item.info.participants
           .filter((i) => i.teamId === +self.filter((item) => item.teamId).map((v) => v.teamId))
@@ -248,7 +254,9 @@ export default function Match({ puuid, search_name, setTotalResult }: MatchModel
                 <div className={`content ${win === 'true' ? 'Win' : 'Lose'}`}>
                   <div className='game_stats'>
                     <div className='game_type'>
-                      <span>{item.info.gameMode === 'ARAM' ? '칼바람 나락' : '일반'}</span>
+                      <span>
+                        {queueId === 420 ? '솔랭' : queueId === 430 ? '일반' : '칼바람 나락'}
+                      </span>
                     </div>
                     <div className='game_time'>{fromNowDate(gameCreation)}</div>
                     <div className='bar'></div>

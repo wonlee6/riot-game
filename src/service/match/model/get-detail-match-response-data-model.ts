@@ -10,6 +10,7 @@ export default interface GetDetailMatchResponseDataModel {
     gameType: string
     gameVersion: string
     mapId: number
+    queueId: number
     teams: {
       win: boolean
     }[]

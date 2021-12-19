@@ -54,10 +54,9 @@ export const second2MS = (e: number): string => {
 export const fromNowDate = (e: string) => {
   const date = e.split(' ')
   if (date[1] === 'days') {
-    if (date[0] === 'a') {
-      return '1일 전'
-    }
     return `${date[0]}일 전`
+  } else if (date[1] === 'day') {
+    return `1일 전`
   } else if (date[1] === 'months') {
     return `${date[0]}달 전`
   } else {

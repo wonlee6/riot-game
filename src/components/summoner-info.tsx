@@ -23,6 +23,11 @@ const SummonerInfo = ({ summoner_data, summoner_auth_data }: SummonerInfoPageMod
   const [btn_state, setBtnState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const btn_ref: React.MutableRefObject<null | HTMLButtonElement> = useRef(null)
 
+  const nowMatchData = () => {
+    return alert('작업 진행중입니다...')
+  }
+
+  // 리그 정보 가져오기
   const league = async () => {
     await API.league
       .leagues(summoner_data[0].leagueId)
@@ -73,12 +78,15 @@ const SummonerInfo = ({ summoner_data, summoner_auth_data }: SummonerInfoPageMod
             </div>
             <div className='info_data'>
               {' '}
-              {summoner_data[0]?.leaguePoints} {summoner_data[0]?.wins}승 {summoner_data[0]?.losses}
-              패{' '}
+              {summoner_data[0]?.leaguePoints}전 {summoner_data[0]?.wins}승{' '}
+              {summoner_data[0]?.losses}패{' '}
             </div>
             <div className='info_data'>
               승률 :{' '}
-              {(summoner_data[0]?.wins / (summoner_data[0]?.wins + summoner_data[0]?.losses)) * 100}
+              {(
+                (summoner_data[0]?.wins / (summoner_data[0]?.wins + summoner_data[0]?.losses)) *
+                100
+              ).toFixed(0)}
               %
             </div>
           </div>
@@ -99,7 +107,7 @@ const SummonerInfo = ({ summoner_data, summoner_auth_data }: SummonerInfoPageMod
                 buttonState={btn_state}
                 buttonRef={btn_ref}
                 width={'100%'}
-                onClick={() => {}}
+                onClick={nowMatchData}
                 idleText='인게임 정보'
                 successText='성공!'
                 color='primary'
