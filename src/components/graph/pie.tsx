@@ -41,7 +41,7 @@ const Pie = ({ total_result }: PieModel) => {
   useEffect(() => {
     setTimeout(() => {
       setIsShow(true)
-    }, 1000)
+    }, 1500)
   }, [show])
 
   return (
