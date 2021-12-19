@@ -30,26 +30,26 @@ state 생성(service -> \*API 명 -> model 안에 API 값 명시) -> API 요청 
 
 <img src="./img/2.png" style="height: 500px">
 
-<img src="./img/9.png">
+<img src="./img/9.png"  style="width: 500px">
 
 
-<img src="./img/3.png">
+<img src="./img/3.png" style="width: 500px">
 
 ## 화면 예시
 
 ### main 화면
 
-<img src="./img/4.png">
+<img src="./img/4.png" style="width: 500px">
 
 ### nav -> email 화면
 
-<img src="./img/5.png">
-<img src="./img/6.png">
-<img src="./img/7.png">
+<img src="./img/5.png" style="width: 500px">
+<img src="./img/6.png" style="width: 500px">
+<img src="./img/7.png" style="width: 500px">
 
 `emailjs-com` 라이브러리를 사용하여 이메일 전송 기능 구현  
 (`material` 라이브러리 사용하여 css 작업)
 
-<img src="./img/8.png">
+<img src="./img/8.png" style="width: 600px">
 
 ## 화면 영상
