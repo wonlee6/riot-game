@@ -9,9 +9,9 @@
 
 ## 기술 스택
 
-- <img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black">` v17`
+- <img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black"> `v17`
 - <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=black">
-- <img src="https://img.shields.io/badge/reactrouter-CA4245?style=for-the-badge&logo=React%20Router&logoColor=black">` v6`
+- <img src="https://img.shields.io/badge/reactrouter-CA4245?style=for-the-badge&logo=React%20Router&logoColor=black"> `v6`
 - `axios`
 - `emailjs-com`
 - <img src="https://img.shields.io/badge/sass-CC6699?style=for-the-badge&logo=sass&logoColor=white">
@@ -41,7 +41,7 @@ state 생성(service -> \*API 명 -> model 안에 API 값 명시) -> API 요청 
 
 <img src="./img/4.png" style="width: 500px">
 
-### nav -> email 화면
+### nav -> email flow
 
 <img src="./img/5.png" style="width: 500px">
 <img src="./img/6.png" style="width: 500px">
