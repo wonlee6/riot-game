@@ -28,13 +28,13 @@
 > [Riot API](https://developer.riotgames.com/apis) 공식 사이트 참조하여 작업 진행
 
 state 생성(service -> \*API 명 -> model 안에 API 값 명시) -> API 요청 -> setState
+<img src="./img/3.png" style="width: 500px">
 
 <img src="./img/2.png" style="height: 500px">
 
 <img src="./img/9.png"  style="width: 500px">
 
 
-<img src="./img/3.png" style="width: 500px">
 
 ## 화면 예시
 
