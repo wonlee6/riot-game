@@ -67,56 +67,16 @@ export default interface GetDetailMatchResponseDataModel {
             flex: number
             offense: number
           }
-          styles: [
-            {
-              description: string
-              selections: [
-                {
-                  perk: number
-                  var1: number
-                  var2: number
-                  var3: number
-                },
-                {
-                  perk: number
-                  var1: number
-                  var2: number
-                  var3: number
-                },
-                {
-                  perk: number
-                  var1: number
-                  var2: number
-                  var3: number
-                },
-                {
-                  perk: number
-                  var1: number
-                  var2: number
-                  var3: number
-                }
-              ]
-              style: number
-            },
-            {
-              description: string
-              selections: [
-                {
-                  perk: number
-                  var1: number
-                  var2: number
-                  var3: number
-                },
-                {
-                  perk: number
-                  var1: number
-                  var2: number
-                  var3: number
-                }
-              ]
-              style: number
-            }
-          ]
+          styles: {
+            description: string
+            selections: {
+              perk: number
+              var1: number
+              var2: number
+              var3: number
+            }[]
+            style: number
+          }[]
         }
         physicalDamageDealtToChampions: number
         profileIcon: number
