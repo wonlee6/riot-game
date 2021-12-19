@@ -54,3 +54,4 @@ state 생성(service -> \*API 명 -> model 안에 API 값 명시) -> API 요청 
 <img src="./img/8.png" style="width: 600px">
 
 ## 화면 영상
+![Hnet-image (1)](https://user-images.githubusercontent.com/21251988/146680348-f2d9aed5-b56d-4a98-bab2-661f8a90155f.gif)
