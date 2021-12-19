@@ -38,8 +38,6 @@ type ChampionDataModel = {
 export default function Match({ puuid, summoner_name, setTotalResult }: MatchModel) {
   const [count, setCount] = useState(20)
 
-  const [is_matches, setIsMatches] = useState(false)
-
   // match data
   const [match_list_data, setMatchListData] = useState([])
   // detail match data
@@ -61,13 +59,11 @@ export default function Match({ puuid, summoner_name, setTotalResult }: MatchMod
   // match 정보 가져오기
   const getMatches = async () => {
     if (puuid) {
-      setIsMatches(true)
       await API.match
         .matches(puuid, count)
         .then((res) => {
           if (res.status === 200) {
             setMatchListData(res.data)
-            setIsMatches(false)
           }
         })
         .catch((err) => console.log(err))
@@ -132,7 +128,7 @@ export default function Match({ puuid, summoner_name, setTotalResult }: MatchMod
     if (puuid) {
       getMatches()
     }
-  }, [])
+  }, [puuid])
 
   useEffect(() => {
     if (match_list_data.length > 0) {
@@ -149,7 +145,7 @@ export default function Match({ puuid, summoner_name, setTotalResult }: MatchMod
   // 배열 정렬
   const filtered_data = useMemo(() => {
     return detail_match_data.sort((a, b) => b.info.gameCreation - a.info.gameCreation)
-  }, [detail_match_data, match_list_data])
+  }, [detail_match_data])
 
   const filtered_total_result_data = useMemo(() => {
     const self = [...detail_match_data]
@@ -162,7 +158,7 @@ export default function Match({ puuid, summoner_name, setTotalResult }: MatchMod
       }, {})
 
     return self
-  }, [detail_match_data])
+  }, [detail_match_data, summoner_name])
 
   useEffect(() => {
     if (filtered_total_result_data) {

@@ -39,7 +39,7 @@ const SummonerInfo = ({ summoner_data, summoner_auth_data }: SummonerInfoPageMod
 
   useEffect(() => {
     league()
-  }, [summoner_data])
+  }, [])
 
   const filtered_emblem_img = useMemo(() => {
     return summoner_data[0]?.tier === 'BRONZE'
@@ -61,7 +61,7 @@ const SummonerInfo = ({ summoner_data, summoner_auth_data }: SummonerInfoPageMod
       : summoner_data[0]?.tier === 'CHALLENGER'
       ? Challenger
       : ''
-  }, [summoner_data[0]?.tier])
+  }, [summoner_data])
 
   return (
     <>
