@@ -1,33 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react'
-import API from '../service/api'
-import getLeagueResponseDataModel from '../service/summoner/model/get-league-response-data-model'
-import getSummonerAuthResponseDataModel from '../service/summoner/model/get-summoner-auth-response-data-model'
+import React, { useRef, useState } from 'react'
 import '../styles/main_page.scss'
 import ReactiveButton from 'reactive-button'
 import Nav from '../components/nav'
-import Match from '../components/match'
-import SummonerInfo from '../components/summoner-info'
-import Summoner from '../components/summoner'
+import { useNavigate } from 'react-router'
 
 const MainPage = () => {
   const [search_name, setSearchName] = useState<string>('')
-  const [summoner_name, setSummonerName] = useState<string>('')
   const [btn_state, setBtnState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const btn_ref: React.MutableRefObject<null | HTMLButtonElement> = useRef(null)
 
-  const [is_summoner, setIsSummoner] = useState<boolean>(false)
-  /**
-   *  API State
-   */
-  // 서머너 auth 정보
-  const [summoner_auth_data, setSummonerAuthData] = useState<getSummonerAuthResponseDataModel>()
-  // 서머너 league 데이터
-  const [summoner_data, setSummonerData] = useState<Array<getLeagueResponseDataModel>>([])
-  // 총 전적
-  const [total_result, setTotalResult] = useState({
-    win: 0,
-    lose: 0,
-  })
+  const navigate = useNavigate()
+  const [recentNames, setRecentNames] = useState([] as string[])
 
   /**
    *  function
@@ -36,52 +19,29 @@ const MainPage = () => {
     if (e.key === 'Enter') searchSummoner(search_name)
   }
 
+  const lastSearchedNames = (e: string) => {
+    setRecentNames(recentNames.includes(e) ? [...recentNames] : recentNames.concat(e))
+    localStorage.setItem('name', JSON.stringify(recentNames))
+  }
+
   /**
    *  API Request
    */
   // 서머너 검색
-  const searchSummoner = async (name: string) => {
+  const searchSummoner = (name: string) => {
     if (search_name === '') return
     setBtnState('loading')
-    setIsSummoner(true)
+    lastSearchedNames(name)
 
-    await API.summoner //
-      .searchSummoner(name)
-      .then((res) => {
-        if (res.status === 200) {
-          setBtnState('success')
-          setSummonerAuthData(res.data)
-          setSummonerName(res.data.name)
-        }
-      })
-      .catch((err) => {
-        console.log(err)
-        setTimeout(() => setBtnState('error'), 1000)
-      })
+    setTimeout(() => {
+      navigate('/match', { state: name })
+    }, 1000)
   }
-
-  // 서머너 데이터 가져오기
-  const getSummonerData = async () => {
-    await API.summoner
-      .getSummonerData(summoner_auth_data?.id)
-      .then((res) => {
-        if (res.status === 200) {
-          setSummonerData(res.data)
-        }
-      })
-      .catch((err) => console.log(err))
-  }
-
-  useEffect(() => {
-    if (summoner_auth_data?.id) {
-      getSummonerData()
-    }
-  }, [summoner_auth_data])
 
   return (
     <>
       <Nav />
-      <div className={is_summoner === true ? `container p-t-m-t` : 'container'}>
+      <div className='container'>
         <div className='search_box'>
           <input
             type='text'
@@ -93,7 +53,6 @@ const MainPage = () => {
             placeholder='닉네임을 입력하세요'
             onKeyPress={handleEnther}
           />
-
           <ReactiveButton
             animation={true}
             height={'100%'}
@@ -106,23 +65,6 @@ const MainPage = () => {
             color='blue'
           />
         </div>
-        {summoner_data.length > 0 && (
-          <div className='summoner_info_container'>
-            <SummonerInfo summoner_data={summoner_data} summoner_auth_data={summoner_auth_data} />
-            <div className='match_container'>
-              <div className='most_champ_box'>
-                <Summoner summoner_data={summoner_data} total_result={total_result} />
-              </div>
-              <div className='match_list_box'>
-                <Match
-                  puuid={summoner_auth_data?.puuid}
-                  summoner_name={summoner_name}
-                  setTotalResult={setTotalResult}
-                />
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </>
   )

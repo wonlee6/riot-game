@@ -3,15 +3,21 @@ import lol_icon2 from '../styles/icon/lol_icon.png'
 import { Icon } from '@iconify/react'
 import { useState } from 'react'
 import EmailAlert from './email-alert'
+import { useNavigate } from 'react-router'
 
 export default function Nav() {
   const [open, setOpen] = useState<boolean>(false)
+  const navigate = useNavigate()
+
+  const handlePage = () => {
+    navigate('/', { replace: true })
+  }
 
   return (
     <>
       <div className='nav_container'>
         <div className='title'>
-          <img src={lol_icon2} alt='lol' onClick={() => window.location.reload()} />
+          <img src={lol_icon2} alt='lol' onClick={handlePage} />
         </div>
         <ul className='icon_wrap'>
           <li onClick={() => window.location.assign('https://github.com/wonlee6')}>
