@@ -34,15 +34,6 @@ const MatchPage = () => {
   })
 
   /**
-   *  function
-   */
-
-  const lastSearchedNames = (e: string) => {
-    setRecentNames(recentNames.includes(e) ? [...recentNames] : recentNames.concat(e))
-    localStorage.setItem('name', JSON.stringify(recentNames))
-  }
-
-  /**
    *  API Request
    */
   // 서머너 검색
@@ -56,7 +47,6 @@ const MatchPage = () => {
           setBtnState('success')
           setSummonerAuthData(res.data)
           setSummonerName(res.data.name)
-          lastSearchedNames(res.data.name)
         }
       })
       .catch((err) => {
@@ -93,32 +83,8 @@ const MatchPage = () => {
   return (
     <>
       <Nav />
-      <div className={is_summoner === true ? `container p-t-m-t` : 'container'}>
-        {/* <div className='search_box'>
-          <input
-            type='text'
-            className='search_input'
-            id='search_name'
-            value={search_name}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchName(e.target.value)}
-            autoComplete='off'
-            placeholder='닉네임을 입력하세요'
-            onKeyPress={handleEnther}
-          />
-
-          <ReactiveButton
-            animation={true}
-            height={'100%'}
-            buttonState={btn_state}
-            buttonRef={btn_ref}
-            width={'20%'}
-            onClick={() => searchSummoner(search_name)}
-            idleText='검색하기'
-            successText='성공!'
-            color='blue'
-          />
-        </div> */}
-        {summoner_data.length > 0 && (
+      <div className='container'>
+        {is_summoner === true && (
           <div className='summoner_info_container'>
             <SummonerInfo summoner_data={summoner_data} summoner_auth_data={summoner_auth_data} />
             <div className='match_container'>

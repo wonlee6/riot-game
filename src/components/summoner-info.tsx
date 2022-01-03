@@ -38,8 +38,10 @@ const SummonerInfo = ({ summoner_data, summoner_auth_data }: SummonerInfoPageMod
   }
 
   useEffect(() => {
-    league()
-  }, [])
+    if (summoner_data.length) {
+      league()
+    }
+  }, [summoner_data])
 
   const filtered_emblem_img = useMemo(() => {
     return summoner_data[0]?.tier === 'BRONZE'
@@ -78,16 +80,10 @@ const SummonerInfo = ({ summoner_data, summoner_auth_data }: SummonerInfoPageMod
             </div>
             <div className='info_data'>
               {' '}
-              {summoner_data[0]?.leaguePoints}전 {summoner_data[0]?.wins}승{' '}
-              {summoner_data[0]?.losses}패{' '}
+              {summoner_data[0]?.leaguePoints}전 {summoner_data[0]?.wins}승 {summoner_data[0]?.losses}패{' '}
             </div>
             <div className='info_data'>
-              승률 :{' '}
-              {(
-                (summoner_data[0]?.wins / (summoner_data[0]?.wins + summoner_data[0]?.losses)) *
-                100
-              ).toFixed(0)}
-              %
+              승률 : {((summoner_data[0]?.wins / (summoner_data[0]?.wins + summoner_data[0]?.losses)) * 100).toFixed(0)}%
             </div>
           </div>
         </div>

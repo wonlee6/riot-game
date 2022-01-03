@@ -1,27 +1,22 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import '../styles/main_page.scss'
 import ReactiveButton from 'reactive-button'
 import Nav from '../components/nav'
 import { useNavigate } from 'react-router'
 
 const MainPage = () => {
-  const [search_name, setSearchName] = useState<string>('')
+  const navigate = useNavigate()
   const [btn_state, setBtnState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const btn_ref: React.MutableRefObject<null | HTMLButtonElement> = useRef(null)
 
-  const navigate = useNavigate()
-  const [recentNames, setRecentNames] = useState([] as string[])
+  const [search_name, setSearchName] = useState<string>('')
+  const [is_search, setIsSearch] = useState<boolean>(false)
 
   /**
    *  function
    */
   const handleEnther = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') searchSummoner(search_name)
-  }
-
-  const lastSearchedNames = (e: string) => {
-    setRecentNames(recentNames.includes(e) ? [...recentNames] : recentNames.concat(e))
-    localStorage.setItem('name', JSON.stringify(recentNames))
   }
 
   /**
@@ -31,7 +26,6 @@ const MainPage = () => {
   const searchSummoner = (name: string) => {
     if (search_name === '') return
     setBtnState('loading')
-    lastSearchedNames(name)
 
     setTimeout(() => {
       navigate('/match', { state: name })
@@ -40,7 +34,7 @@ const MainPage = () => {
 
   return (
     <>
-      <Nav />
+      <Nav searchName={search_name} is_search={is_search} />
       <div className='container'>
         <div className='search_box'>
           <input
