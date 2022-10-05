@@ -1,37 +1,36 @@
-import ChampionMasteries from './champion-masteries'
-import { TotalResultModel } from './match'
-import getLeagueResponseDataModel from '../service/summoner/model/get-league-response-data-model'
+import { memo } from 'react'
+import { MatchRecoilFn } from '../pages/MatchPage'
 import '../styles/summoner.scss'
-import Pie from './graph/pie'
 
-type SummonerModel = {
-  summoner_data: Array<getLeagueResponseDataModel>
-  total_result: TotalResultModel
-}
+const Summoner = () => {
+  const { summonerData } = MatchRecoilFn()
 
-export default function Summoner({ summoner_data, total_result }: SummonerModel) {
+  const wins = summonerData.length > 0 ? summonerData[0].wins : 0
+  const losses = summonerData.length > 0 ? summonerData[0].wins : 0
+
   return (
     <>
       <div className='graph_box'>
         <div className='graph'>
-          <Pie total_result={total_result} />
+          {/* <Pie ={} /> */}
           <div className='recent-box'>
             <span className='recent-span'>
-              {total_result.win + total_result.lose}전 {total_result.win}승 {total_result.lose}패
+              {wins + losses}전 {wins}승 {losses}패
             </span>
           </div>
           <div className='recent-box'>
             <span className='recent-span'>
-              최근 {total_result.win + total_result.lose}경기 승률{' '}
-              {((total_result.win / (total_result.win + total_result.lose)) * 100).toFixed(0)}%
+              최근 {wins + losses}경기 승률 {((wins / (wins + losses)) * 100).toFixed(0)}%
             </span>
           </div>
         </div>
         <div className='recent_result'></div>
       </div>
       {/* <div className='champ_box'>
-        <ChampionMasteries uid={summoner_data[0]?.summonerId} />
+        <ChampionMasteries uid={summoner_data[0]?summonerId} />
       </div> */}
     </>
   )
 }
+
+export default memo(Summoner)

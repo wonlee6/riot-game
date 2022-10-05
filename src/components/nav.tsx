@@ -1,37 +1,18 @@
 import '../styles/nav.scss'
 import lol_icon2 from '../styles/icon/lol_icon.png'
 import { Icon } from '@iconify/react'
-import { useEffect, useState } from 'react'
-import EmailAlert from './email-alert'
+import { useState } from 'react'
+import EmailAlert from './EmailAlert'
 import { useNavigate } from 'react-router'
 
-interface NavModel {
-  searchName?: string
-  is_search?: boolean
-}
-
-export default function Nav({ searchName, is_search }: NavModel) {
+export default function Nav() {
   const [open, setOpen] = useState<boolean>(false)
 
   const navigate = useNavigate()
 
-  const [recentNames, setRecentNames] = useState([] as string[])
-
   const handlePage = () => {
     navigate('/', { replace: true })
   }
-
-  // const lastSearchedNames = (e: string) => {
-  //   console.log(e)
-  //   setRecentNames(recentNames.includes(e) ? [...recentNames] : recentNames.concat(e))
-  //   localStorage.setItem('name', JSON.stringify(recentNames))
-  // }
-
-  // useEffect(() => {
-  //   if (is_search === true && searchName !== undefined) {
-  //     lastSearchedNames(searchName)
-  //   }
-  // }, [is_search])
 
   return (
     <>

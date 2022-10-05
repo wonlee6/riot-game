@@ -19,7 +19,7 @@
       border-radius: 4px;
       height: 100px;
       .game_stats {
-        width: 90px;
+        width: 4.5rem;
         font-size: 12px;
         color: #555;
         display: flex;
@@ -34,8 +34,8 @@
             text-overflow: ellipsis;
           }
         }
-        .game_time {
-        }
+        // .game_time {
+        // }
         .bar {
           width: 27px;
           margin: 5px auto;
@@ -43,8 +43,8 @@
           display: block;
           background-color: #cdd2d2;
         }
-        .game_result {
-        }
+        // .game_result {
+        // }
         .game_result.lose {
           color: #c6443e;
           font-family: bold;
@@ -53,11 +53,11 @@
           color: #1a78ae;
           font-family: bold;
         }
-        .game_length {
-        }
+        // .game_length {
+        // }
       }
       .game_setting_info {
-        width: 115px;
+        width: 7rem;
         display: flex;
         flex-wrap: wrap;
         flex-direction: column;
@@ -110,7 +110,7 @@
 
       .kda {
         font-size: 12px;
-        width: 115px;
+        width: 7rem;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -141,7 +141,7 @@
       }
 
       .stats {
-        width: 100px;
+        width: 4rem;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -157,7 +157,7 @@
         }
       }
       .item {
-        width: 115px;
+        width: 7rem;
 
         .item_list {
           display: flex;
@@ -192,9 +192,9 @@
         }
       }
       .players {
-        width: 190px;
+        width: 18rem;
         display: flex;
-        margin-left: 15px;
+        margin-left: 1rem;
         .team {
           margin-top: 2px;
           width: 50%;
@@ -224,9 +224,9 @@
           }
         }
       }
-      .stats_btn {
-        width: 30px;
-      }
+      // .stats_btn {
+      //   width: 30px;
+      // }
     }
   }
 }
