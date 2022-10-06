@@ -30,7 +30,7 @@
 
 > service : API 요청에 따라 분류 -->
 
-### API flow
+<!-- ### API flow
 
 > [Riot API](https://developer.riotgames.com/apis) 공식 사이트 참조하여 작업 진행
 
@@ -39,15 +39,15 @@ state 생성(service -> \*API 명 -> model 안에 API 값 명시) -> API 요청 
 
 <img src="./img/2.png" style="height: 500px">
 
-<img src="./img/9.png"  style="width: 500px">
+<img src="./img/9.png"  style="width: 500px"> -->
 
-## 화면 예시
+<!-- ## 화면 예시 -->
 
-### main 화면
+<!-- ### main 화면
 
-<img src="./img/4.png" style="width: 500px">
+<img src="./img/4.png" style="width: 500px"> -->
 
-### nav -> email flow
+### EmailJS-com 라이브러리 사용
 
 <img src="./img/5.png" style="width: 500px">
 <img src="./img/6.png" style="width: 500px">
@@ -56,4 +56,4 @@ state 생성(service -> \*API 명 -> model 안에 API 값 명시) -> API 요청 
 `emailjs-com` 라이브러리를 사용하여 이메일 전송 기능 구현  
 (`material` 및 `nivo` 라이브러리 사용하여 css 작업 및 차트 구현)
 
-<img src="./img/8.png" style="width: 600px">
+<!-- <img src="./img/8.png" style="width: 600px"> -->
