@@ -68,7 +68,7 @@ const SummonerInfo = () => {
   return (
     <>
       {summonerData.length > 0 ? (
-        <div className='summoner_card'>
+        <>
           <div className='emblem_box'>
             <img src={filteredEmblemImg} alt='Emblem' />
             <div className='info_box'>
@@ -81,9 +81,17 @@ const SummonerInfo = () => {
               </div>
               <div className='info_data'>
                 {' '}
-                {summonerData[0].wins + summonerData[0].losses}전 {summonerData[0].wins}승 {summonerData[0].losses}패{' '}
+                {summonerData[0].wins + summonerData[0].losses}전 {summonerData[0].wins}승{' '}
+                {summonerData[0].losses}패{' '}
               </div>
-              <div className='info_data'>승률 : {((summonerData[0].wins / (summonerData[0].wins + summonerData[0].losses)) * 100).toFixed(0)}%</div>
+              <div className='info_data'>
+                승률 :{' '}
+                {(
+                  (summonerData[0].wins / (summonerData[0].wins + summonerData[0].losses)) *
+                  100
+                ).toFixed(0)}
+                %
+              </div>
             </div>
           </div>
           <div className='summoner_box'>
@@ -110,7 +118,7 @@ const SummonerInfo = () => {
               </div>
             </div>
           </div>
-        </div>
+        </>
       ) : null}
     </>
   )

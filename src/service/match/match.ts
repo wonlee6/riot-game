@@ -4,14 +4,14 @@ import { API_KEY, MATCH_URL } from '../../function/api-constant'
 export const match = {
   // 전적 매치 정보 가져오기
   // puuid
-  async matches(request: string, count: number) {
+  async matches(request: string, startCount: number, endCount: number) {
     const config: AxiosRequestConfig = {
       url: `${MATCH_URL}/lol/match/v5/matches/by-puuid/${request}/ids`,
       method: 'GET',
       params: {
         api_key: API_KEY,
-        start: 0,
-        count,
+        startCount,
+        endCount,
       },
     }
     return await axios(config)

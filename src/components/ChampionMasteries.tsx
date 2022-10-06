@@ -5,7 +5,7 @@ type ChampionMasteriesModel = {
   uid: string
 }
 
-export default function ChampionMasteries({ uid }: ChampionMasteriesModel) {
+const ChampionMasteries = ({ uid }: ChampionMasteriesModel) => {
   /*
    * API REQUEST
    */
@@ -30,3 +30,5 @@ export default function ChampionMasteries({ uid }: ChampionMasteriesModel) {
     </>
   )
 }
+
+export default ChampionMasteries

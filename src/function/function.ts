@@ -48,18 +48,3 @@ export const second2MS = (e: number): string => {
   const minute = Math.floor(e / 60)
   return `${minute}분${numberFormat(e - minute * 60)}초`
 }
-
-// moment
-// 2 days ago => 2일 전
-export const fromNowDate = (e: string) => {
-  const date = e.split(' ')
-  if (date[1] === 'days') {
-    return `${date[0]}일 전`
-  } else if (date[1] === 'day') {
-    return `1일 전`
-  } else if (date[1] === 'months') {
-    return `${date[0]}달 전`
-  } else {
-    return `${date[0]}시간 전`
-  }
-}

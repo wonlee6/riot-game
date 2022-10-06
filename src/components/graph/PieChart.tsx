@@ -1,58 +1,53 @@
-import React, { useEffect, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import { ResponsivePie } from '@nivo/pie'
-import { TotalResultModel } from '../Match'
+import { MatchRecoilFn } from '../../pages/MatchPage'
 
-type PieModel = {
-  total_result: TotalResultModel
-}
-const Pie = ({ total_result }: PieModel) => {
-  const [show, setIsShow] = useState(false)
+const PieChart = () => {
+  const { summonerData } = MatchRecoilFn()
+
   const [data, setData] = useState([
-    {
-      id: '승리',
-      value: 0,
-      color: '#1a78ae',
-    },
     {
       id: '패배',
       value: 0,
-      color: '#c6443e',
+      // color: 'hsl(203, 65, 78)',
+    },
+    {
+      id: '승리',
+      value: 0,
+      // color: 'hsl(0, 28, 73)',
     },
   ])
 
   useEffect(() => {
-    const win = total_result.win
-    const lose = total_result.lose
-
-    setData((prev) => {
-      prev.map((item) => {
-        if (item.id === '승리') {
-          item.value = win
-          return item
-        } else {
-          item.value = lose
-          return item
-        }
-      })
-      return prev
-    })
-  }, [total_result])
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsShow(true)
-    }, 1500)
-  }, [show])
+    if (summonerData.length > 0) {
+      setData((prevState) =>
+        prevState.map((item) => {
+          if (item.id === '승리') {
+            return {
+              ...item,
+              value: summonerData[0].wins,
+            }
+          } else {
+            return {
+              ...item,
+              value: summonerData[0].losses,
+            }
+          }
+        })
+      )
+    }
+  }, [summonerData])
 
   return (
     <>
-      {show && (
+      {summonerData.length > 0 && (
         <ResponsivePie
           data={data}
           margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
           innerRadius={0.5}
           padAngle={0.7}
           cornerRadius={3}
+          colors={{ scheme: 'pastel1' }}
           activeOuterRadiusOffset={8}
           borderWidth={1}
           borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
@@ -63,6 +58,7 @@ const Pie = ({ total_result }: PieModel) => {
           arcLabelsSkipAngle={10}
           arcLabelsTextColor={{ from: 'color', modifiers: [['darker', 2]] }}
           enableArcLinkLabels={false}
+          sortByValue
           legends={[
             {
               anchor: 'bottom',
@@ -76,7 +72,7 @@ const Pie = ({ total_result }: PieModel) => {
               itemTextColor: '#999',
               itemDirection: 'left-to-right',
               itemOpacity: 1,
-              symbolSize: 18,
+              symbolSize: 24,
               symbolShape: 'circle',
               effects: [
                 {
@@ -94,4 +90,4 @@ const Pie = ({ total_result }: PieModel) => {
   )
 }
 
-export default Pie
+export default memo(PieChart)

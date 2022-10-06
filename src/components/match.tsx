@@ -1,20 +1,21 @@
 import { Icon } from '@iconify/react'
 import moment from 'moment'
 import 'moment/locale/ko'
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import React, { memo, useMemo } from 'react'
 import { CHAMP_IMG, ITEM_IMG, RUNES_IMG, SPELL_IMG } from '../function/api-constant'
 import { second2MS } from '../function/function'
-import API from '../service/api'
+import { ChampionDataModel } from '../pages/MatchPage'
 import GetDetailMatchResponseDataModel from '../service/match/model/get-detail-match-response-data-model'
 import GetRunesResponseDataModel from '../service/runes/model/get-runes-response-data-model'
 import GetSpellResponseDataModel from '../service/spell/model/get-spell-response-data-model'
 import '../styles/match.scss'
 
-export type TotalResultModel = {
+export interface TotalResultModel {
   win: number
   lose: number
 }
-type SpellDataModel = {
+
+interface SpellDataModel {
   key: string
   name: string
   description: string
@@ -23,89 +24,35 @@ type SpellDataModel = {
   }
 }
 
-type ChampionDataModel = {
-  [e: string]: {
-    id: string
-    name: string
-  }
-}
-
 interface Props {
   matchData: GetDetailMatchResponseDataModel
   summonerName: string
+  spellData: GetSpellResponseDataModel | undefined
+  championData: ChampionDataModel | undefined
+  runesData: Array<GetRunesResponseDataModel> | undefined
 }
 
 const Match = (props: Props) => {
-  // spell data
-  const [spell_data, setSpellData] = useState<GetSpellResponseDataModel>()
-  // runes data
-  const [runes_data, setRunesData] = useState<Array<GetRunesResponseDataModel>>([])
-  // champion data
-  const [champion_data, setChampionData] = useState<ChampionDataModel>()
-
-  /**
-   *  API Request
-   */
-  // spell 정보 가져오기
-  const spell = useCallback(async () => {
-    if (spell_data) return
-    await API.spell
-      .spell()
-      .then((res) => {
-        if (res.status === 200) {
-          const data = res.data.data
-          setSpellData(data)
-        }
-      })
-      .catch((err) => console.log(err))
-  }, [])
-
-  // 룬 정보 가져오기
-  const runes = useCallback(async () => {
-    await API.runes
-      .runes()
-      .then((res) => {
-        setRunesData(res.data)
-      })
-      .catch((err) => console.log(err))
-  }, [])
-
-  // 챔피언 이름 가져오기
-  const champion = useCallback(async () => {
-    await API.champion
-      .champion()
-      .then((res) => {
-        if (res.status === 200) {
-          setChampionData(res.data.data)
-        }
-      })
-      .catch((err) => console.log(err))
-  }, [])
-
-  useEffect(() => {
-    spell()
-    runes()
-    champion()
-  }, [])
-
   // spell info data
   const filtered_spell_data = useMemo(() => {
     const result = []
-    if (spell_data) {
-      for (const value of Object.values(spell_data)) {
+    if (props.spellData) {
+      for (const value of Object.values(props.spellData)) {
         result.push(value)
       }
     }
     return result
-  }, [spell_data])
+  }, [props.spellData])
 
   const filtered_champ_data = useMemo(() => {
-    if (champion_data) {
-      return Object.values(champion_data)
+    if (props.championData) {
+      return Object.values(props.championData)
     }
-  }, [champion_data])
+  }, [props.championData])
 
-  const self = props.matchData.info.participants.filter((i) => i.summonerName.includes(props.summonerName))
+  const self = props.matchData.info.participants.filter((i) =>
+    i.summonerName.includes(props.summonerName)
+  )
   const win = props.matchData.info.participants
     .filter((i) => i.summonerName.includes(props.summonerName))
     .map((i) => i.win)
@@ -128,16 +75,22 @@ const Match = (props: Props) => {
   const spell1 = self.map((i) => i.summoner1Id).join('')
   const spell2 = self.map((i) => i.summoner2Id).join('')
 
-  const spell1_img = filtered_spell_data?.filter((item: SpellDataModel) => item.key === spell1).map((i: SpellDataModel) => i.image.full)
+  const spell1_img = filtered_spell_data
+    ?.filter((item: SpellDataModel) => item.key === spell1)
+    .map((i: SpellDataModel) => i.image.full)
 
-  const spell2_img = filtered_spell_data?.filter((item: SpellDataModel) => item.key === spell2).map((i: SpellDataModel) => i.image.full)
+  const spell2_img = filtered_spell_data
+    ?.filter((item: SpellDataModel) => item.key === spell2)
+    .map((i: SpellDataModel) => i.image.full)
 
   const mainRunes = self.map((i) => i.perks.styles)[0][0].style
   const subRunes = self.map((i) => i.perks.styles)[0][1].style
 
-  const mainRunes_img = runes_data?.filter((i) => i.id === mainRunes).map((i) => i.slots[0].runes[0].icon)
+  const mainRunes_img = props.runesData
+    ?.filter((i) => i.id === mainRunes)
+    .map((i) => i.slots[0].runes[0].icon)
 
-  const subRunes_img = runes_data?.filter((i) => i.id === subRunes).map((i) => i.icon)
+  const subRunes_img = props.runesData?.filter((i) => i.id === subRunes).map((i) => i.icon)
 
   const redTeam = props.matchData.info.participants.filter((i) => i.teamId === 100)
 
@@ -154,7 +107,9 @@ const Match = (props: Props) => {
               </div>
               <div className='game_time'>{gameCreation}</div>
               <div className='bar'></div>
-              <div className={`game_result ${win === 'true' ? 'win' : 'lose'}`}>{win === 'true' ? '승리' : '패배'}</div>
+              <div className={`game_result ${win === 'true' ? 'win' : 'lose'}`}>
+                {win === 'true' ? '승리' : '패배'}
+              </div>
               <div className='game_length'>{second2MS(props.matchData.info.gameDuration)}</div>
             </div>
             <div className='game_setting_info'>
@@ -193,18 +148,28 @@ const Match = (props: Props) => {
             </div>
             <div className='kda'>
               <div className='kda_score'>
-                {self.map((i) => i.kills)} / <span>{self.map((i) => i.deaths)}</span> / {self.map((i) => i.assists)}
+                {self.map((i) => i.kills)} / <span>{self.map((i) => i.deaths)}</span> /{' '}
+                {self.map((i) => i.assists)}
               </div>
               <div className='kda_avg'>
                 {(
-                  (parseInt(self.map((i) => i.kills).join('')) + parseInt(self.map((i) => i.assists).join(''))) /
+                  (parseInt(self.map((i) => i.kills).join('')) +
+                    parseInt(self.map((i) => i.assists).join(''))) /
                   parseInt(self.map((i) => i.deaths).join(''))
                 ).toFixed(2)}
                 :1 <span>평점</span>
               </div>
               <div className='kda_kill'>
                 {largestKill !== '1' && (
-                  <span>{largestKill === '2' ? '더블킬' : largestKill === '3' ? '트리플킬' : largestKill === '4' ? '쿼드라킬' : '펜타킬'}</span>
+                  <span>
+                    {largestKill === '2'
+                      ? '더블킬'
+                      : largestKill === '3'
+                      ? '트리플킬'
+                      : largestKill === '4'
+                      ? '쿼드라킬'
+                      : '펜타킬'}
+                  </span>
                 )}
               </div>
             </div>
@@ -216,7 +181,13 @@ const Match = (props: Props) => {
               <div className='stats_info'>
                 <span className='stats_kill'>
                   킬관여
-                  {(((parseInt(self.map((i) => i.kills).join('')) + parseInt(self.map((i) => i.assists).join(''))) / totalKill) * 100).toFixed(0)}%
+                  {(
+                    ((parseInt(self.map((i) => i.kills).join('')) +
+                      parseInt(self.map((i) => i.assists).join(''))) /
+                      totalKill) *
+                    100
+                  ).toFixed(0)}
+                  %
                 </span>
               </div>
             </div>
@@ -224,49 +195,70 @@ const Match = (props: Props) => {
               <div className='item_list'>
                 <div className='item'>
                   {+self.filter((i) => i.item0).join('') !== 0 ? (
-                    <img src={`${ITEM_IMG}/${self.filter((i) => i.item0).map((i) => i.item0)}.png`} alt='item0' />
+                    <img
+                      src={`${ITEM_IMG}/${self.filter((i) => i.item0).map((i) => i.item0)}.png`}
+                      alt='item0'
+                    />
                   ) : (
                     <div className='noneItem'></div>
                   )}
                 </div>
                 <div className='item'>
                   {+self.filter((i) => i.item1).join('') !== 0 ? (
-                    <img src={`${ITEM_IMG}/${self.filter((i) => i.item1).map((i) => i.item1)}.png`} alt='item1' />
+                    <img
+                      src={`${ITEM_IMG}/${self.filter((i) => i.item1).map((i) => i.item1)}.png`}
+                      alt='item1'
+                    />
                   ) : (
                     <div className='noneItem'></div>
                   )}
                 </div>
                 <div className='item'>
                   {+self.filter((i) => i.item2).join('') !== 0 ? (
-                    <img src={`${ITEM_IMG}/${self.filter((i) => i.item2).map((i) => i.item2)}.png`} alt='item2' />
+                    <img
+                      src={`${ITEM_IMG}/${self.filter((i) => i.item2).map((i) => i.item2)}.png`}
+                      alt='item2'
+                    />
                   ) : (
                     <div className='noneItem'></div>
                   )}
                 </div>
                 <div className='item'>
                   {+self.filter((i) => i.item6).join('') !== 0 ? (
-                    <img src={`${ITEM_IMG}/${self.filter((i) => i.item6).map((i) => i.item6)}.png`} alt='item6' />
+                    <img
+                      src={`${ITEM_IMG}/${self.filter((i) => i.item6).map((i) => i.item6)}.png`}
+                      alt='item6'
+                    />
                   ) : (
                     <div className='noneItem'></div>
                   )}
                 </div>
                 <div className='item'>
                   {+self.filter((i) => i.item3).join('') !== 0 ? (
-                    <img src={`${ITEM_IMG}/${self.filter((i) => i.item3).map((i) => i.item3)}.png`} alt='item3' />
+                    <img
+                      src={`${ITEM_IMG}/${self.filter((i) => i.item3).map((i) => i.item3)}.png`}
+                      alt='item3'
+                    />
                   ) : (
                     <div className='noneItem'></div>
                   )}
                 </div>
                 <div className='item'>
                   {+self.filter((i) => i.item4).join('') !== 0 ? (
-                    <img src={`${ITEM_IMG}/${self.filter((i) => i.item4).map((i) => i.item4)}.png`} alt='item1' />
+                    <img
+                      src={`${ITEM_IMG}/${self.filter((i) => i.item4).map((i) => i.item4)}.png`}
+                      alt='item1'
+                    />
                   ) : (
                     <div className='noneItem'></div>
                   )}
                 </div>
                 <div className='item'>
                   {+self.filter((i) => i.item5).join('') !== 0 ? (
-                    <img src={`${ITEM_IMG}/${self.filter((i) => i.item5).map((i) => i.item5)}.png`} alt='item1' />
+                    <img
+                      src={`${ITEM_IMG}/${self.filter((i) => i.item5).map((i) => i.item5)}.png`}
+                      alt='item1'
+                    />
                   ) : (
                     <div className='noneItem'></div>
                   )}
@@ -285,7 +277,12 @@ const Match = (props: Props) => {
                     <React.Fragment key={idx}>
                       <div className='summoner'>
                         <div className='play_champ'>
-                          <img src={`${CHAMP_IMG}/${i.championName === 'FiddleSticks' ? 'Fiddlesticks' : i.championName}.png`} alt='champ' />
+                          <img
+                            src={`${CHAMP_IMG}/${
+                              i.championName === 'FiddleSticks' ? 'Fiddlesticks' : i.championName
+                            }.png`}
+                            alt='champ'
+                          />
                         </div>
                         <div className='player_name'>
                           <span>{i.summonerName}</span>
@@ -299,7 +296,12 @@ const Match = (props: Props) => {
                     <React.Fragment key={idx}>
                       <div className='summoner'>
                         <div className='play_champ'>
-                          <img src={`${CHAMP_IMG}/${i.championName === 'FiddleSticks' ? 'Fiddlesticks' : i.championName}.png`} alt='champ' />
+                          <img
+                            src={`${CHAMP_IMG}/${
+                              i.championName === 'FiddleSticks' ? 'Fiddlesticks' : i.championName
+                            }.png`}
+                            alt='champ'
+                          />
                         </div>
                         <div className='player_name'>
                           <span>{i.summonerName}</span>
