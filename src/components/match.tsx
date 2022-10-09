@@ -1,13 +1,14 @@
+import React, { memo } from 'react'
 import { Icon } from '@iconify/react'
+import { AxiosResponse } from 'axios'
 import moment from 'moment'
-import 'moment/locale/ko'
-import React, { memo, useMemo } from 'react'
 import { CHAMP_IMG, ITEM_IMG, RUNES_IMG, SPELL_IMG } from '../function/api-constant'
 import { second2MS } from '../function/function'
-import { ChampionDataModel } from '../pages/MatchPage'
-import GetDetailMatchResponseDataModel from '../service/match/model/get-detail-match-response-data-model'
+import { SpellModel } from '../hooks/useSpell'
 import GetRunesResponseDataModel from '../service/runes/model/get-runes-response-data-model'
-import GetSpellResponseDataModel from '../service/spell/model/get-spell-response-data-model'
+import { ChampInfoModel } from '../service/champion/model/get-champion-response-data'
+import GetDetailMatchResponseDataModel from '../service/match/model/get-detail-match-response-data-model'
+import 'moment/locale/ko'
 import '../styles/match.scss'
 
 export interface TotalResultModel {
@@ -15,41 +16,15 @@ export interface TotalResultModel {
   lose: number
 }
 
-interface SpellDataModel {
-  key: string
-  name: string
-  description: string
-  image: {
-    full: string
-  }
-}
-
 interface Props {
   matchData: GetDetailMatchResponseDataModel
   summonerName: string
-  spellData: GetSpellResponseDataModel | undefined
-  championData: ChampionDataModel | undefined
-  runesData: Array<GetRunesResponseDataModel> | undefined
+  spellData: SpellModel[]
+  championData: Array<ChampInfoModel>
+  runesData: AxiosResponse<GetRunesResponseDataModel[], any> | undefined
 }
 
 const Match = (props: Props) => {
-  // spell info data
-  const filtered_spell_data = useMemo(() => {
-    const result = []
-    if (props.spellData) {
-      for (const value of Object.values(props.spellData)) {
-        result.push(value)
-      }
-    }
-    return result
-  }, [props.spellData])
-
-  const filtered_champ_data = useMemo(() => {
-    if (props.championData) {
-      return Object.values(props.championData)
-    }
-  }, [props.championData])
-
   const self = props.matchData.info.participants.filter((i) =>
     i.summonerName.includes(props.summonerName)
   )
@@ -70,27 +45,23 @@ const Match = (props: Props) => {
   const gameCreation = moment(props.matchData.info.gameStartTimestamp).fromNow()
 
   const champion_name = self.map((i) => i.championName).join('')
-  const name = filtered_champ_data?.filter((v) => v.id === champion_name).map((i) => i.name)
+  const name = props.championData.filter((v) => v.id === champion_name).map((i) => i.name)
 
   const spell1 = self.map((i) => i.summoner1Id).join('')
   const spell2 = self.map((i) => i.summoner2Id).join('')
 
-  const spell1_img = filtered_spell_data
-    ?.filter((item: SpellDataModel) => item.key === spell1)
-    .map((i: SpellDataModel) => i.image.full)
+  const spell1_img = props.spellData?.filter((item) => item.key === spell1).map((i) => i.image.full)
 
-  const spell2_img = filtered_spell_data
-    ?.filter((item: SpellDataModel) => item.key === spell2)
-    .map((i: SpellDataModel) => i.image.full)
+  const spell2_img = props.spellData?.filter((item) => item.key === spell2).map((i) => i.image.full)
 
   const mainRunes = self.map((i) => i.perks.styles)[0][0].style
   const subRunes = self.map((i) => i.perks.styles)[0][1].style
 
-  const mainRunes_img = props.runesData
+  const mainRunes_img = props.runesData?.data
     ?.filter((i) => i.id === mainRunes)
     .map((i) => i.slots[0].runes[0].icon)
 
-  const subRunes_img = props.runesData?.filter((i) => i.id === subRunes).map((i) => i.icon)
+  const subRunes_img = props.runesData?.data.filter((i) => i.id === subRunes).map((i) => i.icon)
 
   const redTeam = props.matchData.info.participants.filter((i) => i.teamId === 100)
 

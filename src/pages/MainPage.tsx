@@ -1,8 +1,8 @@
 import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react'
-import '../styles/main_page.scss'
 import ReactiveButton from 'reactive-button'
 import { useNavigate } from 'react-router'
 import Nav from '../components/Nav'
+import '../styles/main_page.scss'
 
 export type BtnModel = 'idle' | 'loading' | 'success' | 'error'
 

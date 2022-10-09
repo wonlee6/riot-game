@@ -1,26 +1,25 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
-import API from '../service/api'
-import '../styles/main_page.scss'
-import Nav from '../components/Nav'
-import SummonerInfo from '../components/SummonerInfo'
-import { useLocation } from 'react-router'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { useLocation } from 'react-router'
+import { AxiosResponse } from 'axios'
+
 import summonerAuth, { summonerAuthData } from '../recoil/summonerAuth'
 import summonerData from '../recoil/summonerData'
+
+import API from '../service/api'
+import { ChampInfoModel } from '../service/champion/model/get-champion-response-data'
 import GetDetailMatchResponseDataModel from '../service/match/model/get-detail-match-response-data-model'
-import { AxiosResponse } from 'axios'
+
+import useSpell, { SpellModel } from '../hooks/useSpell'
+import useRunes from '../hooks/useRunes'
+import useChampion from '../hooks/useChampion'
+
+import Nav from '../components/Nav'
+import SummonerInfo from '../components/SummonerInfo'
 import Summoner from '../components/Summoner'
 import Match from '../components/Match'
 import LoadingSpinner from '../components/common/LoadingSpinner'
-import GetSpellResponseDataModel from '../service/spell/model/get-spell-response-data-model'
-import GetRunesResponseDataModel from '../service/runes/model/get-runes-response-data-model'
-
-export interface ChampionDataModel {
-  [e: string]: {
-    id: string
-    name: string
-  }
-}
+import '../styles/main_page.scss'
 
 export const MatchRecoilFn = () => ({
   setSummonerAuth: useSetRecoilState(summonerAuth),
@@ -32,66 +31,17 @@ const MatchPage = () => {
   const location = useLocation()
   const { setSummonerAuth, summonerAuthData } = MatchRecoilFn()
 
+  const [isPending, startTransition] = useTransition()
+  const matchLength: React.MutableRefObject<number> = useRef<number>(0)
+  /**
+   *  API State
+   */
   // match data
   const [matchListData, setMatchListData] = useState([])
   // detail match data
   const [detailMatchData, setDetailMatchData] = useState<Array<GetDetailMatchResponseDataModel>>([])
 
-  const matchLength: React.MutableRefObject<number> = useRef<number>(0)
-
   const [isMatchListData, setIsMatchListData] = useState<boolean>(false)
-  const [isPending, startTransition] = useTransition()
-
-  // spell data
-  const [spellData, setSpellData] = useState<GetSpellResponseDataModel>()
-  // runes data
-  const [runesData, setRunesData] = useState<Array<GetRunesResponseDataModel>>([])
-  // champion data
-  const [championData, setChampionData] = useState<ChampionDataModel>()
-
-  /**
-   *  API Request
-   */
-  // spell 정보 가져오기
-  const spell = useCallback(async () => {
-    await API.spell
-      .spell()
-      .then((res) => {
-        if (res.status === 200) {
-          const data = res.data.data
-          setSpellData(data)
-        }
-      })
-      .catch((err) => console.log(err))
-  }, [])
-
-  // 룬 정보 가져오기
-  const runes = useCallback(async () => {
-    await API.runes
-      .runes()
-      .then((res) => {
-        setRunesData(res.data)
-      })
-      .catch((err) => console.log(err))
-  }, [])
-
-  // 챔피언 이름 가져오기
-  const champion = useCallback(async () => {
-    await API.champion
-      .champion()
-      .then((res) => {
-        if (res.status === 200) {
-          setChampionData(res.data.data)
-        }
-      })
-      .catch((err) => console.log(err))
-  }, [])
-
-  useEffect(() => {
-    spell()
-    runes()
-    champion()
-  }, [])
 
   // 서머너 검색
   const searchSummoner = async (name: string) => {
@@ -154,7 +104,7 @@ const MatchPage = () => {
   const getDetailMatchData = async () => {
     await Promise.allSettled(matchListData.map((item) => API.match.detailMatch(item))).then(
       (response: PromiseSettledResult<AxiosResponse<any, any>>[]) =>
-        response.map((item) => {
+        response.forEach((item) => {
           if (item.status === 'fulfilled') {
             startTransition(() => {
               setDetailMatchData((prev) => [...prev, item.value.data])
@@ -173,6 +123,30 @@ const MatchPage = () => {
       getDetailMatchData()
     }
   }, [matchListData])
+
+  /**
+   *  API - Spell, Runes, Champion
+   */
+  const spellData = useSpell()
+  const runesData = useRunes()
+  const championData = useChampion()
+
+  const filteredSpellData: Array<SpellModel> = useMemo(() => {
+    const result = []
+    if (spellData.isSuccess) {
+      for (const value of Object.values(spellData.data)) {
+        result.push(value)
+      }
+    }
+    return result
+  }, [spellData])
+
+  const filteredChampData: Array<ChampInfoModel> = useMemo(() => {
+    if (championData.isSuccess) {
+      return Object.values(championData.data)
+    }
+    return []
+  }, [championData])
 
   return (
     <>
@@ -196,9 +170,9 @@ const MatchPage = () => {
                     key={item.info.gameId}
                     matchData={item}
                     summonerName={summonerAuthData.name}
-                    spellData={spellData}
-                    championData={championData}
-                    runesData={runesData}
+                    spellData={filteredSpellData}
+                    championData={filteredChampData}
+                    runesData={runesData.data}
                   />
                 ))
               )}
