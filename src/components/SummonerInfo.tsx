@@ -11,8 +11,7 @@ import Challenger from '../styles/tier_icon/Emblem_Challenger.png'
 import API from '../service/api'
 import { SUMMONER_ICON_URL } from '../function/api-constant'
 import ReactiveButton from 'reactive-button'
-import { MatchRecoilFn } from '../pages/MatchPage'
-import { BtnModel } from '../pages/MainPage'
+import { BtnModel, MatchRecoilFn } from '../pages/MainPage'
 
 const SummonerInfo = () => {
   const { summonerAuthData, summonerData } = MatchRecoilFn()

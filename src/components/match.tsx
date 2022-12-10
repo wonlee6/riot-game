@@ -1,85 +1,106 @@
-import React, { memo } from 'react'
+import React, { memo, useEffect, useMemo, useState } from 'react'
 import { Icon } from '@iconify/react'
-import { AxiosResponse } from 'axios'
 import moment from 'moment'
 import { CHAMP_IMG, ITEM_IMG, RUNES_IMG, SPELL_IMG } from '../function/api-constant'
 import { second2MS } from '../function/function'
 import { SpellModel } from '../hooks/useSpell'
 import GetRunesResponseDataModel from '../service/runes/model/get-runes-response-data-model'
 import { ChampInfoModel } from '../service/champion/model/get-champion-response-data'
-import GetDetailMatchResponseDataModel from '../service/match/model/get-detail-match-response-data-model'
+import GetDetailMatchResponseDataModel, {
+  PartcipantMoel,
+} from '../service/match/model/get-detail-match-response-data-model'
 import 'moment/locale/ko'
 import '../styles/match.scss'
-
-export interface TotalResultModel {
-  win: number
-  lose: number
-}
 
 interface Props {
   matchData: GetDetailMatchResponseDataModel
   summonerName: string
   spellData: SpellModel[]
   championData: Array<ChampInfoModel>
-  runesData: AxiosResponse<GetRunesResponseDataModel[], any> | undefined
+  runesData: GetRunesResponseDataModel[]
 }
 
 const Match = (props: Props) => {
-  const self = props.matchData.info.participants.filter((i) =>
-    i.summonerName.includes(props.summonerName)
-  )
-  const win = props.matchData.info.participants
-    .filter((i) => i.summonerName.includes(props.summonerName))
-    .map((i) => i.win)
-    .join('')
+  const [self, setSelf] = useState<PartcipantMoel | undefined>(undefined)
 
   const queueId = props.matchData.info.queueId
 
   const totalKill = props.matchData.info.participants
-    .filter((i) => i.teamId === +self.filter((item) => item.teamId).map((v) => v.teamId))
+    .filter((i) => i.teamId === self?.teamId)
     .map((i) => i.kills)
     .reduce((acc, cur) => acc + cur, 0)
 
-  const largestKill = self.map((i) => i.largestMultiKill).join('')
+  const largestKill = useMemo(() => self?.largestMultiKill ?? 0, [self])
 
   const gameCreation = moment(props.matchData.info.gameStartTimestamp).fromNow()
 
-  const champion_name = self.map((i) => i.championName).join('')
-  const name = props.championData.filter((v) => v.id === champion_name).map((i) => i.name)
+  const champion_name = useMemo(() => self?.championName ?? '', [self])
+  const name = useMemo(
+    () => props.championData.find((v) => v.id === champion_name)?.name ?? '',
+    [props.championData, champion_name]
+  )
 
-  const spell1 = self.map((i) => i.summoner1Id).join('')
-  const spell2 = self.map((i) => i.summoner2Id).join('')
+  const spell1 = useMemo(() => self?.summoner1Id, [self])
+  const spell2 = useMemo(() => self?.summoner2Id, [self])
 
-  const spell1_img = props.spellData?.filter((item) => item.key === spell1).map((i) => i.image.full)
+  const spell1_img = useMemo(
+    () => props.spellData?.find((i) => i.key === spell1 + '')?.image.full,
+    [props.spellData, spell1]
+  )
+  const spell2_img = useMemo(
+    () => props.spellData?.find((i) => i.key === spell2 + '')?.image.full,
+    [props.spellData, spell2]
+  )
 
-  const spell2_img = props.spellData?.filter((item) => item.key === spell2).map((i) => i.image.full)
+  const mainRunes = useMemo(() => self?.perks.styles[0].style ?? '', [self])
+  const subRunes = useMemo(() => self?.perks.styles[1].style ?? '', [self])
 
-  const mainRunes = self.map((i) => i.perks.styles)[0][0].style
-  const subRunes = self.map((i) => i.perks.styles)[0][1].style
+  const mainRunes_img = useMemo(() => {
+    if (mainRunes) {
+      return props.runesData.find((i) => i.id === mainRunes)?.slots[0].runes[0].icon ?? ''
+    }
+    return ''
+  }, [mainRunes, props.runesData])
 
-  const mainRunes_img = props.runesData?.data
-    ?.filter((i) => i.id === mainRunes)
-    .map((i) => i.slots[0].runes[0].icon)
+  const subRunes_img = useMemo(() => {
+    if (subRunes) {
+      return props.runesData.find((i) => i.id === subRunes)?.icon ?? ''
+    }
+    return ''
+  }, [subRunes, props.runesData])
 
-  const subRunes_img = props.runesData?.data.filter((i) => i.id === subRunes).map((i) => i.icon)
+  const redTeam = useMemo(
+    () => props.matchData.info.participants.filter((i) => i.teamId === 100),
+    [props.matchData]
+  )
+  const blueTeam = useMemo(
+    () => props.matchData.info.participants.filter((i) => i.teamId === 200),
+    [props.matchData]
+  )
 
-  const redTeam = props.matchData.info.participants.filter((i) => i.teamId === 100)
+  useEffect(() => {
+    if (props.matchData && props.summonerName) {
+      setSelf(() =>
+        props.matchData.info.participants.find((i) => i.summonerName === props.summonerName)
+      )
+    }
+  }, [])
 
-  const blueTeam = props.matchData.info.participants.filter((i) => i.teamId === 200)
+  if (!self) return null
 
   return (
     <React.Fragment>
       <div className='match_item'>
         <div className='match_wrap'>
-          <div className={`content ${win === 'true' ? 'Win' : 'Lose'}`}>
+          <div className={`content ${self.win === true ? 'Win' : 'Lose'}`}>
             <div className='game_stats'>
               <div className='game_type'>
                 <span>{queueId === 420 ? '솔랭' : queueId === 430 ? '일반' : '칼바람 나락'}</span>
               </div>
               <div className='game_time'>{gameCreation}</div>
               <div className='bar'></div>
-              <div className={`game_result ${win === 'true' ? 'win' : 'lose'}`}>
-                {win === 'true' ? '승리' : '패배'}
+              <div className={`game_result ${self.win === true ? 'win' : 'lose'}`}>
+                {self.win === true ? '승리' : '패배'}
               </div>
               <div className='game_length'>{second2MS(props.matchData.info.gameDuration)}</div>
             </div>
@@ -87,12 +108,11 @@ const Match = (props: Props) => {
               <div className='info_box'>
                 <div className='cham_img'>
                   <img
-                    src={`${CHAMP_IMG}/${self.map((i) => {
-                      if (i.championName === 'FiddleSticks') {
-                        return 'Fiddlesticks.png'
-                      }
-                      return i.championName + '.png'
-                    })}`}
+                    src={`${CHAMP_IMG}/${
+                      self.championName === 'FiddleSticks'
+                        ? 'Fiddlesticks.png'
+                        : self.championName + '.png'
+                    }`}
                     alt='champ_img'
                   />
                 </div>
@@ -119,117 +139,78 @@ const Match = (props: Props) => {
             </div>
             <div className='kda'>
               <div className='kda_score'>
-                {self.map((i) => i.kills)} / <span>{self.map((i) => i.deaths)}</span> /{' '}
-                {self.map((i) => i.assists)}
+                {self?.kills} / <span>{self?.deaths}</span> / {self?.assists}
               </div>
               <div className='kda_avg'>
-                {(
-                  (parseInt(self.map((i) => i.kills).join('')) +
-                    parseInt(self.map((i) => i.assists).join(''))) /
-                  parseInt(self.map((i) => i.deaths).join(''))
-                ).toFixed(2)}
+                {self
+                  ? ((Number(self.kills) + Number(self.assists)) / Number(self.deaths)).toFixed(2)
+                  : ''}
                 :1 <span>평점</span>
               </div>
               <div className='kda_kill'>
-                {largestKill !== '1' && (
-                  <span>
-                    {largestKill === '2'
-                      ? '더블킬'
-                      : largestKill === '3'
-                      ? '트리플킬'
-                      : largestKill === '4'
-                      ? '쿼드라킬'
-                      : '펜타킬'}
-                  </span>
-                )}
+                <span>{multiKillNameBylargestKill(largestKill)}</span>
               </div>
             </div>
             <div className='stats'>
               <div className='stats_info'>
-                <span>레벨{self.map((i) => i.champLevel)}</span>
+                <span>{`레벨 ${self.champLevel}`}</span>
               </div>
-
               <div className='stats_info'>
                 <span className='stats_kill'>
-                  킬관여
-                  {(
-                    ((parseInt(self.map((i) => i.kills).join('')) +
-                      parseInt(self.map((i) => i.assists).join(''))) /
-                      totalKill) *
+                  {`킬관여 ${(
+                    ((Number(self.kills) + Number(self.assists)) / totalKill) *
                     100
-                  ).toFixed(0)}
-                  %
+                  ).toFixed(0)}%`}
                 </span>
               </div>
             </div>
             <div className='item'>
               <div className='item_list'>
                 <div className='item'>
-                  {+self.filter((i) => i.item0).join('') !== 0 ? (
-                    <img
-                      src={`${ITEM_IMG}/${self.filter((i) => i.item0).map((i) => i.item0)}.png`}
-                      alt='item0'
-                    />
+                  {+self.item0 !== 0 ? (
+                    <img src={`${ITEM_IMG}/${self.item0}.png`} alt='item0' />
                   ) : (
                     <div className='noneItem'></div>
                   )}
                 </div>
                 <div className='item'>
-                  {+self.filter((i) => i.item1).join('') !== 0 ? (
-                    <img
-                      src={`${ITEM_IMG}/${self.filter((i) => i.item1).map((i) => i.item1)}.png`}
-                      alt='item1'
-                    />
+                  {+self.item1 !== 0 ? (
+                    <img src={`${ITEM_IMG}/${self.item1}.png`} alt='item1' />
                   ) : (
                     <div className='noneItem'></div>
                   )}
                 </div>
                 <div className='item'>
-                  {+self.filter((i) => i.item2).join('') !== 0 ? (
-                    <img
-                      src={`${ITEM_IMG}/${self.filter((i) => i.item2).map((i) => i.item2)}.png`}
-                      alt='item2'
-                    />
+                  {+self.item2 !== 0 ? (
+                    <img src={`${ITEM_IMG}/${self.item2}.png`} alt='item2' />
                   ) : (
                     <div className='noneItem'></div>
                   )}
                 </div>
                 <div className='item'>
-                  {+self.filter((i) => i.item6).join('') !== 0 ? (
-                    <img
-                      src={`${ITEM_IMG}/${self.filter((i) => i.item6).map((i) => i.item6)}.png`}
-                      alt='item6'
-                    />
+                  {+self.item6 !== 0 ? (
+                    <img src={`${ITEM_IMG}/${self.item6}.png`} alt='item6' />
                   ) : (
                     <div className='noneItem'></div>
                   )}
                 </div>
                 <div className='item'>
-                  {+self.filter((i) => i.item3).join('') !== 0 ? (
-                    <img
-                      src={`${ITEM_IMG}/${self.filter((i) => i.item3).map((i) => i.item3)}.png`}
-                      alt='item3'
-                    />
+                  {+self.item3 !== 0 ? (
+                    <img src={`${ITEM_IMG}/${self.item3}.png`} alt='item3' />
                   ) : (
                     <div className='noneItem'></div>
                   )}
                 </div>
                 <div className='item'>
-                  {+self.filter((i) => i.item4).join('') !== 0 ? (
-                    <img
-                      src={`${ITEM_IMG}/${self.filter((i) => i.item4).map((i) => i.item4)}.png`}
-                      alt='item1'
-                    />
+                  {+self.item4 !== 0 ? (
+                    <img src={`${ITEM_IMG}/${self.item4}.png`} alt='item1' />
                   ) : (
                     <div className='noneItem'></div>
                   )}
                 </div>
                 <div className='item'>
-                  {+self.filter((i) => i.item5).join('') !== 0 ? (
-                    <img
-                      src={`${ITEM_IMG}/${self.filter((i) => i.item5).map((i) => i.item5)}.png`}
-                      alt='item1'
-                    />
+                  {+self.item5 !== 0 ? (
+                    <img src={`${ITEM_IMG}/${self.item5}.png`} alt='item1' />
                   ) : (
                     <div className='noneItem'></div>
                   )}
@@ -292,3 +273,18 @@ const Match = (props: Props) => {
 }
 
 export default memo(Match)
+
+const multiKillNameBylargestKill = (largestKill = 0) => {
+  switch (largestKill) {
+    case 2:
+      return '더블킬'
+    case 3:
+      return '트리플킬'
+    case 4:
+      return '쿼드라킬'
+    case 5:
+      return '펜타킬'
+    default:
+      return null
+  }
+}

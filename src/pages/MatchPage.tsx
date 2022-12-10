@@ -1,10 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
-import { useLocation } from 'react-router'
-import { AxiosResponse } from 'axios'
-
-import summonerAuth, { summonerAuthData } from '../recoil/summonerAuth'
-import summonerData from '../recoil/summonerData'
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 
 import API from '../service/api'
 import { ChampInfoModel } from '../service/champion/model/get-champion-response-data'
@@ -18,21 +12,18 @@ import Nav from '../components/Nav'
 import SummonerInfo from '../components/SummonerInfo'
 import Summoner from '../components/Summoner'
 import Match from '../components/Match'
-import LoadingSpinner from '../components/common/LoadingSpinner'
 import '../styles/main_page.scss'
-
-export const MatchRecoilFn = () => ({
-  setSummonerAuth: useSetRecoilState(summonerAuth),
-  summonerAuthData: useRecoilValue(summonerAuthData),
-  summonerData: useRecoilValue(summonerData),
-})
+import { MatchRecoilFn } from './MainPage'
 
 const MatchPage = () => {
-  const location = useLocation()
-  const { setSummonerAuth, summonerAuthData } = MatchRecoilFn()
+  const { summonerAuthData } = MatchRecoilFn()
 
-  const [isPending, startTransition] = useTransition()
-  const matchLength: React.MutableRefObject<number> = useRef<number>(0)
+  const [totalResult, setTotalResult] = useState({
+    win: 0,
+    lose: 0,
+  })
+  const [matchLength, setMatchLength] = useState(0)
+
   /**
    *  API State
    */
@@ -41,53 +32,15 @@ const MatchPage = () => {
   // detail match data
   const [detailMatchData, setDetailMatchData] = useState<Array<GetDetailMatchResponseDataModel>>([])
 
-  const [isMatchListData, setIsMatchListData] = useState<boolean>(false)
-
-  // 서머너 검색
-  const searchSummoner = async (name: string) => {
-    await API.summoner //
-      .searchSummoner(name)
-      .then((res) => {
-        if (res.status === 200) {
-          setSummonerAuth(res.data)
-          setIsMatchListData(true)
-        }
-      })
-      .catch((err) => {
-        console.error(err)
-      })
-  }
-
-  useEffect(() => {
-    const stateName = location.state as string
-    if (stateName) {
-      searchSummoner(stateName)
-    }
-
-    return () => {
-      setMatchListData([])
-      setDetailMatchData([])
-      matchLength.current = 0
-    }
-  }, [location.state])
-
-  useEffect(() => {
-    if (isMatchListData) {
-      setTimeout(() => {
-        setIsMatchListData(false)
-      }, 1000)
-    }
-  }, [isMatchListData])
-
   // match 정보 가져오기
   const getMatches = async () => {
     if (summonerAuthData) {
       await API.match
-        .matches(summonerAuthData.puuid, matchLength.current, matchLength.current + 19)
+        .matches(summonerAuthData.puuid, matchLength, matchLength + 10)
         .then((res) => {
           if (res.status === 200) {
             setMatchListData(res.data)
-            matchLength.current = matchLength.current + 19
+            setMatchLength((prev) => prev + 10)
           }
         })
         .catch((err) => {
@@ -96,29 +49,31 @@ const MatchPage = () => {
     }
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     getMatches()
-  }, [summonerAuthData])
+  }, [])
 
   // match detail 정보 가져오기
   const getDetailMatchData = async () => {
-    await Promise.allSettled(matchListData.map((item) => API.match.detailMatch(item))).then(
-      (response: PromiseSettledResult<AxiosResponse<any, any>>[]) =>
-        response.forEach((item) => {
-          if (item.status === 'fulfilled') {
-            startTransition(() => {
-              setDetailMatchData((prev) => [...prev, item.value.data])
-            })
-          }
-        })
-    )
+    try {
+      const response = await Promise.allSettled(
+        matchListData.map((item) => API.match.detailMatch(item))
+      )
+      response.forEach((item) => {
+        if (item.status === 'fulfilled') {
+          setDetailMatchData((prev) => [...prev, item.value.data])
+        }
+      })
+    } catch (error) {
+      console.log('match detail', error)
+    }
   }
 
-  const filtered_data = useMemo(() => {
+  const filteredData = useMemo(() => {
     return detailMatchData.sort((a, b) => b.info.gameCreation - a.info.gameCreation)
   }, [detailMatchData])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (matchListData.length > 0) {
       getDetailMatchData()
     }
@@ -148,34 +103,70 @@ const MatchPage = () => {
     return []
   }, [championData])
 
+  const filteredTotalResultData = useMemo(() => {
+    const self = [...detailMatchData]
+      .map((i) =>
+        i.info.participants.filter(
+          (v) => summonerAuthData && v.summonerName.includes(summonerAuthData?.name)
+        )
+      )
+      .map((i) => i.map((i) => i.win))
+      .reduce((acc, cur) => acc.concat(cur), [])
+      .reduce((acc: any, cur: any) => {
+        acc[cur] = (acc[cur] || 0) + 1
+        return acc
+      }, {})
+
+    return self
+  }, [detailMatchData, summonerAuthData])
+
+  useLayoutEffect(() => {
+    if (typeof filteredTotalResultData !== 'undefined') {
+      setTotalResult({
+        win: filteredTotalResultData.true,
+        lose: filteredTotalResultData.false,
+      })
+    }
+  }, [filteredTotalResultData])
+
+  const [isAllData, setIsAllData] = useState(false)
+
+  useEffect(() => {
+    if (
+      filteredData?.length > 0 &&
+      filteredChampData?.length > 0 &&
+      filteredSpellData?.length > 0 &&
+      runesData?.length > 0
+    ) {
+      setIsAllData(true)
+    }
+  }, [filteredData, filteredChampData, filteredSpellData, runesData])
+
   return (
     <>
       <Nav />
       <div className='container'>
         <div className='summoner_info_container'>
           <div className='summoner_card'>
-            {isMatchListData ? <LoadingSpinner /> : <SummonerInfo />}
+            <SummonerInfo />
           </div>
           <div className='match_container'>
             <div className='most_champ_box'>
-              <Summoner />
+              <Summoner totalResult={totalResult} />
             </div>
             <div className='match_list_box'>
-              {isPending ? (
-                <LoadingSpinner />
-              ) : (
-                summonerAuthData &&
-                filtered_data.map((item) => (
-                  <Match
-                    key={item.info.gameId}
-                    matchData={item}
-                    summonerName={summonerAuthData.name}
-                    spellData={filteredSpellData}
-                    championData={filteredChampData}
-                    runesData={runesData.data}
-                  />
-                ))
-              )}
+              {summonerAuthData && isAllData
+                ? filteredData.map((item) => (
+                    <Match
+                      key={item.info.gameId}
+                      matchData={item}
+                      summonerName={summonerAuthData.name}
+                      spellData={filteredSpellData}
+                      championData={filteredChampData}
+                      runesData={runesData}
+                    />
+                  ))
+                : null}
             </div>
           </div>
         </div>

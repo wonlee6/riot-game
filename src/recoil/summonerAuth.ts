@@ -11,8 +11,7 @@ const summonerAuthData = selector<getSummonerAuthResponseDataModel | null>({
   get: ({ get }) => {
     const summoner = get(summonerAuth)
 
-    if (summoner) return summoner
-    return null
+    return summoner
   },
 })
 

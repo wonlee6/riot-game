@@ -14,6 +14,7 @@
 
 - <img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black"> `v18`
 - `Recoil`
+- `React-Query`
 - <img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=black"> `4.8.4`
 - <img src="https://img.shields.io/badge/reactrouter-CA4245?style=for-the-badge&logo=React%20Router&logoColor=black"> `v6`
 - `axios`
