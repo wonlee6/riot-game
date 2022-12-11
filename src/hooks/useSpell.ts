@@ -13,12 +13,16 @@ export interface SpellModel {
 }
 
 const useSpell = (): UseQueryResult<AxiosResponse<GetSpellResponseDataModel>> => {
-  return useQuery(['GET_SPELL'], async () => {
-    const {
-      data: { data },
-    } = await API.spell.spell()
-    return data
-  })
+  return useQuery(
+    ['GET_SPELL'],
+    async () => {
+      const {
+        data: { data },
+      } = await API.spell.spell()
+      return data
+    },
+    { refetchOnWindowFocus: false }
+  )
 }
 
 export default useSpell
