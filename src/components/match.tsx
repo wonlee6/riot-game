@@ -147,9 +147,11 @@ const Match = (props: Props) => {
                   : ''}
                 :1 <span>평점</span>
               </div>
-              <div className='kda_kill'>
-                <span>{multiKillNameBylargestKill(largestKill)}</span>
-              </div>
+              {largestKill >= 2 ? (
+                <div className='kda_kill'>
+                  <span>{multiKillNameBylargestKill(largestKill)}</span>
+                </div>
+              ) : null}
             </div>
             <div className='stats'>
               <div className='stats_info'>
